@@ -1,0 +1,10 @@
+# Role
+
+ROLE_MEGAMARKET_PRODUCTS:
+  header: 'Megamarket'
+  name: 'Megamarket Products'
+  desc: 'Megamarket products'
+
+ROLE_MEGAMARKET_PRODUCTS_INDEX:
+  name: 'View'
+  desc: ''

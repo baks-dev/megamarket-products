@@ -1,0 +1,12 @@
+# Роль
+
+ROLE_MEGAMARKET_PRODUCTS:
+  header: 'Megamarket'
+  name: 'Карточки товаров'
+  desc: 'Карточки товаров Megamarket'
+
+ROLE_MEGAMARKET_PRODUCTS_INDEX:
+  name: 'Просмотр'
+  desc: ''
+
+
