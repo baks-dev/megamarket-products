@@ -1,0 +1,31 @@
+page:
+  index: 'Megamarket product cards'
+  new: 'Add card'
+  edit: 'Edit card'
+  update: 'Update Megamarket card'
+  delete: 'Delete card'
+  get: 'Get new Megamarket cards'
+
+breadcrumb:
+  index: 'Megamarket product cards'
+  new: 'Add a Megamarket product card'
+  edit: 'Edit Megamarket product card'
+  update: 'Update Megamarket product card'
+  delete: 'Delete Megamarket product card'
+  restore: 'Restore Megamarket product card'
+
+success:
+  new: 'Megamarket product card has been successfully added'
+  edit: 'Megamarket product card has been successfully updated'
+  update: 'The Megamarket product card has been successfully added to the queue for updating'
+  delete: 'Megamarket product card was successfully deleted'
+  restore: 'Megamarket product card has been restored'
+  get: 'Megamarket squat update added to queue'
+
+danger:
+  new: '%s: Error adding a Megamarket product card'
+  edit: '%s: Error updating the Megamarket product card'
+  update: '%s: Error updating the Megamarket product card'
+  delete: '%s: Error when deleting Megamarket product card'
+  restore: '%s: Error while restoring the Megamarket product card'
+  get: "There's already been an update! Please try again in 5 minutes!"

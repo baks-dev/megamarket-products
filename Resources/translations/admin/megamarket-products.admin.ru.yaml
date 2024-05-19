@@ -1,0 +1,31 @@
+page:
+  index: 'Карточки товаров Megamarket'
+  new: 'Добавить карточку '
+  edit: 'Редактировать карточку'
+  update: 'Обновить карточку Megamarket'
+  delete: 'Удалить карточку '
+  get: 'Получить новые карточки Megamarket'
+
+breadcrumb:
+  index: 'Карточки товаров Megamarket'
+  new: 'Добавить карточку товара Megamarket'
+  edit: 'Редактировать карточку товара Megamarket'
+  update: 'Обновить карточку товара Megamarket'
+  delete: 'Удалить карточку товара Megamarket'
+  restore: 'Восстановить карточку товара Megamarket'
+
+success:
+  new: 'Карточка товара Megamarket успешно добавлена'
+  edit: 'Карточка товара Megamarket успешно обновлена'
+  update: 'Карточка товара Megamarket успешно добавлена в очередь для обновления'
+  delete: 'Карточка товара Megamarket успешно удалена'
+  restore: 'Карточка товара Megamarket восстановлена'
+  get: 'Обновление корточек Megamarket добавлено в очередь'
+
+danger:
+  new: '%s: Ошибка при добавлении карточки товара Megamarket'
+  edit: '%s: Ошибка при обновлении карточки товара Megamarket'
+  update: '%s: Ошибка при обновлении карточки товара Megamarket'
+  delete: '%s: Ошибка при удалении карточки товара Megamarket'
+  restore: '%s: Ошибка при восстановлении карточки товара Megamarket'
+  get: 'Уже было обновление! Повторите попытку через 5 минут!'
