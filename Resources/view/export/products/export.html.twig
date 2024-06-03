@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding='UTF-8'?>
 
 <yml_catalog date='{{ 'now'|date('Y-m-d\\TH:00:00P') }}'>
     <shop>
@@ -16,6 +16,9 @@
             {% endfor %}
         </categories>
 
+        <currencies>
+            <currency id='RUR' rate='1' />
+        </currencies>
 
         {# Элемент с описанием параметров отгрузки данного оффера. #}
         <shipment-options>
@@ -53,9 +56,9 @@
 
                     <name>{{ card.product_name }}
                         {# Значение множественного варианта ТП #}
-                        {{ card.variation_value|call_twig_func(card.variation_reference) ~ card.modification_value|call_twig_func(card.modification_reference) }}
+                        {{ card.variation_value|call_twig_func(card.variation_reference~'_template') ~ card.modification_value|call_twig_func(card.modification_reference~'_template') }}
                         {# Значение торгового предложения #}
-                        {{ card.offer_value|call_twig_func(card.offer_reference) }}
+                        {{ card.offer_value|call_twig_func(card.offer_reference~'_template') }}
                         {# Постфикс торгового предложения #}
                         {{ card.offer_postfix }}
                         {# Постфикс множественного варианта #}
