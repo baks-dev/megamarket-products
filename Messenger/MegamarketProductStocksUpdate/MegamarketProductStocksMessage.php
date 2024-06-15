@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2023.  Baks.dev <admin@baks.dev>
+ *  Copyright 2024.  Baks.dev <admin@baks.dev>
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -21,33 +21,15 @@
  *  THE SOFTWARE.
  */
 
-namespace Symfony\Component\DependencyInjection\Loader\Configurator;
+declare(strict_types=1);
 
-use Symfony\Config\FrameworkConfig;
+namespace BaksDev\Megamarket\Products\Messenger\MegamarketProductStocksUpdate;
 
-return static function(FrameworkConfig $framework) {
-    
-    $messenger = $framework->messenger();
+use BaksDev\Yandex\Market\Products\Messenger\Card\YaMarketProductsCardMessage;
+use BaksDev\Yandex\Market\Products\Type\Card\Event\YaMarketProductsCardEventUid;
+use BaksDev\Yandex\Market\Products\Type\Card\Id\YaMarketProductsCardUid;
 
-    $messenger
-        ->transport('megamarket-products')
-        ->dsn('redis://%env(REDIS_PASSWORD)%@%env(REDIS_HOST)%:%env(REDIS_PORT)%?auto_setup=true')
-        ->options(['stream' => 'megamarket-products'])
-        ->failureTransport('failed-megamarket-products')
-        ->retryStrategy()
-        ->maxRetries(3)
-        ->delay(1000)
-        ->maxDelay(0)
-        ->multiplier(3) // увеличиваем задержку перед каждой повторной попыткой
-        ->service(null)
+final class MegamarketProductStocksMessage
+{
 
-    ;
-
-    $failure = $framework->messenger();
-
-    $failure->transport('failed-megamarket-products')
-        ->dsn('%env(MESSENGER_TRANSPORT_DSN)%')
-        ->options(['queue_name' => 'failed-megamarket-products'])
-    ;
-
-};
+}

@@ -21,27 +21,31 @@
  *  THE SOFTWARE.
  */
 
-namespace Symfony\Component\DependencyInjection\Loader\Configurator;
+declare(strict_types=1);
 
-use BaksDev\Megamarket\Products\BaksDevMegamarketProductsBundle;
+namespace BaksDev\Megamarket\Products\Messenger\MegamarketProductPriceUpdate;
 
-return static function(ContainerConfigurator $configurator) {
+use BaksDev\Megamarket\Products\Api\Price\Update\MegamarketProductPriceUpdateRequest;
+use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
-    $services = $configurator->services()
-        ->defaults()
-        ->autowire()
-        ->autoconfigure()
-    ;
+#[AsMessageHandler]
+final class MegamarketProductPriceUpdate
+{
+    private MegamarketProductPriceUpdateRequest $request;
 
-    $NAMESPACE = BaksDevMegamarketProductsBundle::NAMESPACE;
-    $PATH = BaksDevMegamarketProductsBundle::PATH;
+    public function __construct(
+        MegamarketProductPriceUpdateRequest $request
+    ) {
 
-    $services->load($NAMESPACE, $PATH)
-        ->exclude([
-            $PATH.'{Entity,Resources,Type}',
-            $PATH.'**/*Message.php',
-            $PATH.'**/*DTO.php',
-        ])
-    ;
+        $this->request = $request;
+    }
 
-};
+    /**
+     * Обновляем базовую цену товара на Megamarket
+     */
+    public function __invoke(MegamarketProductPriceMessage $message): void
+    {
+        return;
+
+    }
+}
