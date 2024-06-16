@@ -85,8 +85,6 @@ final class MegamarketProductPriceUpdateRequest extends Megamarket
 
         $content = $response->toArray(false);
 
-        dd($content );
-
         if(isset($content['error']))
         {
             $content['error'][0] = __FILE__.':'.__LINE__;

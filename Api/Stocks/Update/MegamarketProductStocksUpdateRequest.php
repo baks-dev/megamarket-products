@@ -31,7 +31,6 @@ use stdClass;
 
 final class MegamarketProductStocksUpdateRequest extends Megamarket
 {
-
     private ?string $article = null;
 
     private ?int $total = null;
@@ -60,7 +59,8 @@ final class MegamarketProductStocksUpdateRequest extends Megamarket
             throw new InvalidArgumentException('Invalid Argument $total');
         }
 
-        $response = $this->TokenHttpClient()->request('POST',
+        $response = $this->TokenHttpClient()->request(
+            'POST',
             '/api/merchantIntegration/v1/offerService/stock/update',
             ['json' => [
                 'meta' => new stdClass(),
