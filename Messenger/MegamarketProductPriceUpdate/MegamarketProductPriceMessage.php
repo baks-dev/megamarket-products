@@ -25,59 +25,90 @@ declare(strict_types=1);
 
 namespace BaksDev\Megamarket\Products\Messenger\MegamarketProductPriceUpdate;
 
-use BaksDev\Yandex\Market\Products\Messenger\Card\YaMarketProductsCardMessage;
-use BaksDev\Yandex\Market\Products\Type\Card\Event\YaMarketProductsCardEventUid;
-use BaksDev\Yandex\Market\Products\Type\Card\Id\YaMarketProductsCardUid;
+use BaksDev\Reference\Currency\Type\Currency;
+use BaksDev\Reference\Money\Type\Money;
+use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 
 final class MegamarketProductPriceMessage
 {
     /**
-     * Идентификатор
+     * Профиль пользователя
      */
-    private YaMarketProductsCardUid $id;
+    private UserProfileUid $profile;
 
     /**
-     * Идентификатор события
+     * Артикул
      */
-    private YaMarketProductsCardEventUid $event;
+    private string $article;
 
     /**
-     * Идентификатор предыдущего события
+     * Стоимость продукции
      */
-    private ?YaMarketProductsCardEventUid $last;
+    private ?Money $price;
+
+    /**
+     * Валюта
+     */
+    private Currency $currency;
 
 
-    public function __construct(YaMarketProductsCardMessage $message)
-    {
-        $this->id = $message->getId();
-        $this->event = $message->getEvent();
-        $this->last = $message->getLast();
+    public function __construct(
+        UserProfileUid|string $profile,
+        string $article,
+        Money|int|float|string|null $price,
+        Currency|string $currency
+    ) {
+
+        if(!$profile instanceof UserProfileUid)
+        {
+            $profile = new UserProfileUid($profile);
+        }
+
+        if($price && !$price instanceof Money)
+        {
+            $price = new Money($price);
+        }
+
+        if(!$currency instanceof Currency)
+        {
+            $currency = new Currency($currency);
+        }
+
+        $this->article = $article;
+        $this->price = $price;
+        $this->currency = $currency;
+        $this->profile = $profile;
     }
 
-
     /**
-     * Идентификатор
+     * Profile
      */
-    public function getId(): YaMarketProductsCardUid
+    public function getProfile(): UserProfileUid
     {
-        return $this->id;
+        return $this->profile;
     }
 
-
     /**
-     * Идентификатор события
+     * Article
      */
-    public function getEvent(): YaMarketProductsCardEventUid
+    public function getArticle(): string
     {
-        return $this->event;
+        return $this->article;
     }
 
+    /**
+     * Price
+     */
+    public function getPrice(): ?Money
+    {
+        return $this->price;
+    }
 
     /**
-     * Идентификатор предыдущего события
+     * Currency
      */
-    public function getLast(): ?YaMarketProductsCardEventUid
+    public function getCurrency(): Currency
     {
-        return $this->last;
+        return $this->currency;
     }
 }

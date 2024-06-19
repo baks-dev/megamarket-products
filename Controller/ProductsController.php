@@ -34,7 +34,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Annotation\Route;
 
-
 #[AsController]
 final class ProductsController extends AbstractController
 {
@@ -44,11 +43,11 @@ final class ProductsController extends AbstractController
         SettingsMainInterface $settingsMain,
         AllCategoryByMenuInterface $allCategory,
         AllProductsByCategoryInterface $productsByCategory
-    ): Response
-    {
+    ): Response {
         //        dd($settingsMain->getSettingsMainAssociative($request->getHost(), $request->getLocale()));
 
-        $response = $this->render([
+        $response = $this->render(
+            [
             'category' => $allCategory->findAll(),
             'settings' => $settingsMain->getSettingsMainAssociative($request->getHost(), $request->getLocale()),
             'products' => $productsByCategory->fetchAllProductByCategory()],

@@ -36,7 +36,6 @@ final class MegamarketProductPriceUpdate
     public function __construct(
         MegamarketProductPriceUpdateRequest $request
     ) {
-
         $this->request = $request;
     }
 
@@ -45,7 +44,10 @@ final class MegamarketProductPriceUpdate
      */
     public function __invoke(MegamarketProductPriceMessage $message): void
     {
-        return;
-
+        $this->request
+            ->profile($message->getProfile())
+            ->article($message->getArticle())
+            ->price($message->getPrice())
+            ->update();
     }
 }

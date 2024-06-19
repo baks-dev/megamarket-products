@@ -25,11 +25,69 @@ declare(strict_types=1);
 
 namespace BaksDev\Megamarket\Products\Messenger\MegamarketProductStocksUpdate;
 
+use BaksDev\Reference\Currency\Type\Currency;
+use BaksDev\Reference\Money\Type\Money;
+use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 use BaksDev\Yandex\Market\Products\Messenger\Card\YaMarketProductsCardMessage;
 use BaksDev\Yandex\Market\Products\Type\Card\Event\YaMarketProductsCardEventUid;
 use BaksDev\Yandex\Market\Products\Type\Card\Id\YaMarketProductsCardUid;
 
 final class MegamarketProductStocksMessage
 {
+    /**
+     * Профиль пользователя
+     */
+    private UserProfileUid $profile;
+
+    /**
+     * Артикул
+     */
+    private string $article;
+
+    /**
+     * Наличие
+     */
+    private int $quantity = 0;
+
+
+    public function __construct(
+        UserProfileUid|string $profile,
+        string $article,
+        int $quantity
+    ) {
+
+        if(!$profile instanceof UserProfileUid)
+        {
+            $profile = new UserProfileUid($profile);
+        }
+
+        $this->profile = $profile;
+        $this->article = $article;
+        $this->quantity = $quantity;
+    }
+
+    /**
+     * Profile
+     */
+    public function getProfile(): UserProfileUid
+    {
+        return $this->profile;
+    }
+
+    /**
+     * Article
+     */
+    public function getArticle(): string
+    {
+        return $this->article;
+    }
+
+    /**
+     * Quantity
+     */
+    public function getQuantity(): int
+    {
+        return $this->quantity;
+    }
 
 }

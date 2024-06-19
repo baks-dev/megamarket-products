@@ -32,12 +32,13 @@ use BaksDev\Yandex\Market\Products\Repository\Card\CurrentYaMarketProductsCard\Y
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
-#[AsMessageHandler]
+#[AsMessageHandler(priority: 100)]
 final class MegamarketProductStocksUpdate
 {
     private MegamarketProductStocksUpdateRequest $request;
 
-    public function __construct(MegamarketProductStocksUpdateRequest $request) {
+    public function __construct(MegamarketProductStocksUpdateRequest $request)
+    {
         $this->request = $request;
     }
 
@@ -47,6 +48,14 @@ final class MegamarketProductStocksUpdate
     public function __invoke(MegamarketProductStocksMessage $message): void
     {
 
-        return;
+        $response = $this->request
+            ->profile($message->getProfile())
+            ->article($message->getArticle())
+            ->total($message->getQuantity())
+            ->update()
+        ;
+
+        dd($response);
+
     }
 }
