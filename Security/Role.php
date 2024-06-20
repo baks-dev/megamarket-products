@@ -35,7 +35,6 @@ use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 #[AutoconfigureTag('baks.menu.admin')]
 final class Role implements RoleInterface, MenuAdminInterface
 {
-
     public const ROLE = 'ROLE_MEGAMARKET_PRODUCTS';
 
     public function getRole(): string
@@ -66,7 +65,7 @@ final class Role implements RoleInterface, MenuAdminInterface
      */
     public function getSortMenu(): int
     {
-        return 120;
+        return 431;
     }
 
     /**
@@ -84,5 +83,5 @@ final class Role implements RoleInterface, MenuAdminInterface
     {
         return false;
     }
-    
+
 }
