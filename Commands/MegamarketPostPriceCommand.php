@@ -42,17 +42,13 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 class MegamarketPostPriceCommand extends Command
 {
     private SymfonyStyle $io;
-    private LoggerInterface $logger;
 
     public function __construct(
         private readonly MegamarketAllProductInterface $allProductPrice,
         private readonly AllProfileMegamarketTokenInterface $allProfileMegamarketToken,
         private readonly MessageDispatchInterface $messageDispatch,
-        LoggerInterface $megamarketProductsLogger
     ) {
         parent::__construct();
-
-        $this->logger = $megamarketProductsLogger;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -126,7 +122,7 @@ class MegamarketPostPriceCommand extends Command
         {
             if(empty($product['product_price']))
             {
-                $this->logger->critical(
+                $this->io->warning(
                     sprintf('Не указана стоимость артикула %s', $product['product_article'])
                 );
 
@@ -142,7 +138,7 @@ class MegamarketPostPriceCommand extends Command
                 empty($product['product_parameter_weight'])
             ) {
 
-                $this->logger->critical(
+                $this->io->warning(
                     sprintf('Не указаны параметры упаковки артикула %s', $product['product_article'])
                 );
 

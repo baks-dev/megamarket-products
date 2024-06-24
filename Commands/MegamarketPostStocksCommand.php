@@ -135,7 +135,7 @@ class MegamarketPostStocksCommand extends Command
             ) {
                 $quantity = 0;
 
-                $this->logger->critical(
+                $this->io->warning(
                     sprintf('Не указаны параметры упаковки артикула %s', $product['product_article'])
                 );
             }
