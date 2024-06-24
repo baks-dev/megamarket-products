@@ -27,7 +27,7 @@ namespace BaksDev\Megamarket\Products\Messenger\Orders;
 
 use BaksDev\Core\Messenger\MessageDispatchInterface;
 use BaksDev\Megamarket\Products\Messenger\MegamarketProductStocksUpdate\MegamarketProductStocksMessage;
-use BaksDev\Megamarket\Products\Repository\AllPrice\MegamarketAllProductInterface;
+use BaksDev\Megamarket\Products\Repository\AllProducts\MegamarketAllProductInterface;
 use BaksDev\Megamarket\Repository\AllProfileToken\AllProfileMegamarketTokenInterface;
 use BaksDev\Orders\Order\Messenger\OrderMessage;
 use BaksDev\Orders\Order\Repository\OrderProducts\OrderProductsInterface;
@@ -129,7 +129,6 @@ final class UpdateStocksMegamarketByChangeStatus
                     );
                 }
             }
-
         }
     }
 }

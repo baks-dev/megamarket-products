@@ -27,7 +27,7 @@ namespace BaksDev\Megamarket\Products\Messenger\ProductStocks;
 
 use BaksDev\Core\Messenger\MessageDispatchInterface;
 use BaksDev\Megamarket\Products\Messenger\MegamarketProductStocksUpdate\MegamarketProductStocksMessage;
-use BaksDev\Megamarket\Products\Repository\AllPrice\MegamarketAllProductInterface;
+use BaksDev\Megamarket\Products\Repository\AllProducts\MegamarketAllProductInterface;
 use BaksDev\Megamarket\Repository\AllProfileToken\AllProfileMegamarketTokenInterface;
 use BaksDev\Products\Stocks\Entity\Event\ProductStockEvent;
 use BaksDev\Products\Stocks\Entity\Products\ProductStockProduct;

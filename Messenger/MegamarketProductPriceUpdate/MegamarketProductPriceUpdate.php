@@ -26,17 +26,20 @@ declare(strict_types=1);
 namespace BaksDev\Megamarket\Products\Messenger\MegamarketProductPriceUpdate;
 
 use BaksDev\Megamarket\Products\Api\Price\Update\MegamarketProductPriceUpdateRequest;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
 final class MegamarketProductPriceUpdate
 {
-    private MegamarketProductPriceUpdateRequest $request;
+    private LoggerInterface $logger;
 
     public function __construct(
-        MegamarketProductPriceUpdateRequest $request
+        private readonly MegamarketProductPriceUpdateRequest $request,
+        LoggerInterface $megamarketProductsLogger,
     ) {
-        $this->request = $request;
+
+        $this->logger = $megamarketProductsLogger;
     }
 
     /**
@@ -49,5 +52,14 @@ final class MegamarketProductPriceUpdate
             ->article($message->getArticle())
             ->price($message->getPrice())
             ->update();
+
+        $this->logger->info(
+            sprintf(
+                'Обновили стоимость товара с артикулом %s => %s',
+                $message->getArticle(),
+                (string) $message->getPrice()
+            ),
+            [__FILE__.':'.__LINE__, 'profile' => (string) $message->getProfile()]
+        );
     }
 }

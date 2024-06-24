@@ -26,16 +26,19 @@ declare(strict_types=1);
 namespace BaksDev\Megamarket\Products\Messenger\MegamarketProductStocksUpdate;
 
 use BaksDev\Megamarket\Products\Api\Stocks\Update\MegamarketProductStocksUpdateRequest;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler(priority: 100)]
 final class MegamarketProductStocksUpdate
 {
-    private MegamarketProductStocksUpdateRequest $request;
+    private LoggerInterface $logger;
 
-    public function __construct(MegamarketProductStocksUpdateRequest $request)
-    {
-        $this->request = $request;
+    public function __construct(
+        private readonly MegamarketProductStocksUpdateRequest $request,
+        LoggerInterface $megamarketProductsLogger,
+    ) {
+        $this->logger = $megamarketProductsLogger;
     }
 
     /**
@@ -48,5 +51,14 @@ final class MegamarketProductStocksUpdate
             ->article($message->getArticle())
             ->total($message->getQuantity())
             ->update();
+
+        $this->logger->info(
+            sprintf(
+                'Обновили остатки товара с артикулом %s => %s',
+                $message->getArticle(),
+                $message->getQuantity()
+            ),
+            [__FILE__.':'.__LINE__, 'profile' => (string) $message->getProfile()]
+        );
     }
 }
