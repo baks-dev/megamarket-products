@@ -118,7 +118,10 @@ final class UpdatePriceMegamarketByChangeProduct
                     $currency
                 );
 
-                $this->messageDispatch->dispatch($MegamarketProductPriceMessage, transport: (string) $profile);
+                $this->messageDispatch->dispatch(
+                    $MegamarketProductPriceMessage,
+                    transport: 'megamarket-products'
+                );
             }
         }
     }

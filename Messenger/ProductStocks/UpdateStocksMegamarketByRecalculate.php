@@ -108,7 +108,10 @@ final class UpdateStocksMegamarketByRecalculate
                 );
 
                 /** Добавляем в очередь на обновление */
-                $this->messageDispatch->dispatch($MegamarketProductStocksMessage, transport: (string) $profiles);
+                $this->messageDispatch->dispatch(
+                    $MegamarketProductStocksMessage,
+                    transport: 'megamarket-products'
+                );
             }
         }
     }

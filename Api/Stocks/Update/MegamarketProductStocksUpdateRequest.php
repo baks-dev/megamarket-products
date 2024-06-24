@@ -54,7 +54,7 @@ final class MegamarketProductStocksUpdateRequest extends Megamarket
             throw new InvalidArgumentException('Invalid Argument $article');
         }
 
-        if(empty($this->total))
+        if($this->total === null)
         {
             throw new InvalidArgumentException('Invalid Argument $total');
         }

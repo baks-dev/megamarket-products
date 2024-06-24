@@ -25,12 +25,7 @@ declare(strict_types=1);
 
 namespace BaksDev\Megamarket\Products\Messenger\MegamarketProductStocksUpdate;
 
-use BaksDev\Reference\Currency\Type\Currency;
-use BaksDev\Reference\Money\Type\Money;
 use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
-use BaksDev\Yandex\Market\Products\Messenger\Card\YaMarketProductsCardMessage;
-use BaksDev\Yandex\Market\Products\Type\Card\Event\YaMarketProductsCardEventUid;
-use BaksDev\Yandex\Market\Products\Type\Card\Id\YaMarketProductsCardUid;
 
 final class MegamarketProductStocksMessage
 {

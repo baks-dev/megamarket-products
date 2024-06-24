@@ -43,7 +43,7 @@ use BaksDev\Yandex\Market\Products\Type\Card\Id\YaMarketProductsCardUid;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
-#[AsMessageHandler]
+#[AsMessageHandler(priority: 100)]
 final class UpdateStocksMegamarketByChangeStatus
 {
     private MessageDispatchInterface $messageDispatch;
@@ -123,7 +123,10 @@ final class UpdateStocksMegamarketByChangeStatus
                     );
 
                     /** Добавляем в очередь на обновление */
-                    $this->messageDispatch->dispatch($MegamarketProductStocksMessage, transport: 'megamarket-products');
+                    $this->messageDispatch->dispatch(
+                        $MegamarketProductStocksMessage,
+                        transport: 'megamarket-products'
+                    );
                 }
             }
 
