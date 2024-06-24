@@ -26,10 +26,6 @@ declare(strict_types=1);
 namespace BaksDev\Megamarket\Products\Messenger\MegamarketProductStocksUpdate;
 
 use BaksDev\Megamarket\Products\Api\Stocks\Update\MegamarketProductStocksUpdateRequest;
-use BaksDev\Yandex\Market\Products\Api\Products\Stocks\YandexMarketProductStocksGetRequest;
-use BaksDev\Yandex\Market\Products\Api\Products\Stocks\YandexMarketProductStocksUpdateRequest;
-use BaksDev\Yandex\Market\Products\Repository\Card\CurrentYaMarketProductsCard\YaMarketProductsCardInterface;
-use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler(priority: 100)]
@@ -47,15 +43,10 @@ final class MegamarketProductStocksUpdate
      */
     public function __invoke(MegamarketProductStocksMessage $message): void
     {
-
-        $response = $this->request
+        $this->request
             ->profile($message->getProfile())
             ->article($message->getArticle())
             ->total($message->getQuantity())
-            ->update()
-        ;
-
-        dd($response);
-
+            ->update();
     }
 }

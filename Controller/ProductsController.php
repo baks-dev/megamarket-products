@@ -37,6 +37,9 @@ use Symfony\Component\Routing\Annotation\Route;
 #[AsController]
 final class ProductsController extends AbstractController
 {
+    /**
+     * Файл экспорта карточек Megamarket
+     */
     #[Route('/megamarket/products.xml', name: 'export.products', methods: ['GET'])]
     public function search(
         Request $request,
@@ -44,19 +47,16 @@ final class ProductsController extends AbstractController
         AllCategoryByMenuInterface $allCategory,
         AllProductsByCategoryInterface $productsByCategory
     ): Response {
-        //        dd($settingsMain->getSettingsMainAssociative($request->getHost(), $request->getLocale()));
 
         $response = $this->render(
             [
-            'category' => $allCategory->findAll(),
-            'settings' => $settingsMain->getSettingsMainAssociative($request->getHost(), $request->getLocale()),
-            'products' => $productsByCategory->fetchAllProductByCategory()],
+                'category' => $allCategory->findAll(),
+                'settings' => $settingsMain->getSettingsMainAssociative($request->getHost(), $request->getLocale()),
+                'products' => $productsByCategory->fetchAllProductByCategory()],
             file: 'export.html.twig'
         );
 
         $response->headers->set('Content-Type', 'text/xml');
-
         return $response;
     }
-
 }

@@ -45,8 +45,7 @@ final class IndexController extends AbstractController
     public function index(
         Request $request,
         int $page = 0,
-    ): Response
-    {
+    ): Response {
         return new Response();
     }
 

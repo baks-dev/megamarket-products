@@ -66,8 +66,8 @@ final class MegamarketProductPriceUpdateRequest extends Megamarket
             throw new InvalidArgumentException('Invalid Argument price');
         }
 
-
-        $response = $this->TokenHttpClient()->request('POST',
+        $response = $this->TokenHttpClient()->request(
+            'POST',
             '/api/merchantIntegration/v1/offerService/manualPrice/save',
             ['json' => [
                 'meta' => new stdClass(),

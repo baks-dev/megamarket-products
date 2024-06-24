@@ -47,7 +47,7 @@ final class MegamarketProductStocksMessage
     /**
      * Наличие
      */
-    private int $quantity = 0;
+    private int $quantity;
 
 
     public function __construct(

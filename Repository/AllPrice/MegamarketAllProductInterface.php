@@ -23,7 +23,26 @@
 
 namespace BaksDev\Megamarket\Products\Repository\AllPrice;
 
-interface MegamarketAllProductPriceInterface
+use BaksDev\Products\Product\Type\Event\ProductEventUid;
+use BaksDev\Products\Product\Type\Id\ProductUid;
+use BaksDev\Products\Product\Type\Offers\ConstId\ProductOfferConst;
+use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
+use BaksDev\Products\Product\Type\Offers\Variation\ConstId\ProductVariationConst;
+use BaksDev\Products\Product\Type\Offers\Variation\Id\ProductVariationUid;
+use BaksDev\Products\Product\Type\Offers\Variation\Modification\ConstId\ProductModificationConst;
+use BaksDev\Products\Product\Type\Offers\Variation\Modification\Id\ProductModificationUid;
+
+interface MegamarketAllProductInterface
 {
+    public function product(ProductUid|string $product): self;
+
+    public function event(ProductEventUid|string $event): self;
+
+    public function offer(ProductOfferUid|ProductOfferConst|string|null $offer): self;
+
+    public function variation(ProductVariationUid|ProductVariationConst|string|null $variation): self;
+
+    public function modification(ProductModificationUid|ProductModificationConst|string|null $modification): self;
+
     public function findAll(): array|bool;
 }

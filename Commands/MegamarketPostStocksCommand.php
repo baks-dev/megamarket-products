@@ -14,7 +14,8 @@ namespace BaksDev\Megamarket\Products\Commands;
 use BaksDev\Core\Messenger\MessageDispatchInterface;
 use BaksDev\Megamarket\Products\Messenger\MegamarketProductPriceUpdate\MegamarketProductPriceMessage;
 use BaksDev\Megamarket\Products\Messenger\MegamarketProductStocksUpdate\MegamarketProductStocksMessage;
-use BaksDev\Megamarket\Products\Repository\AllPrice\MegamarketAllProductPriceInterface;
+use BaksDev\Megamarket\Products\Repository\AllPrice\MegamarketAllProductInterface;
+use BaksDev\Megamarket\Repository\AllProfileToken\AllProfileMegamarketTokenInterface;
 use BaksDev\Reference\Currency\Type\Currency;
 use BaksDev\Reference\Money\Type\Money;
 use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
@@ -29,6 +30,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 /**
@@ -40,55 +42,96 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 )]
 class MegamarketPostStocksCommand extends Command
 {
-    private MegamarketAllProductPriceInterface $allProductPrice;
-    private MessageDispatchInterface $messageDispatch;
-    private LoggerInterface $logger;
+    private SymfonyStyle $io;
 
     public function __construct(
-        MegamarketAllProductPriceInterface $allProductPrice,
-        MessageDispatchInterface $messageDispatch,
-        LoggerInterface $logger
+        private readonly MegamarketAllProductInterface $allProductPrice,
+        private readonly AllProfileMegamarketTokenInterface $allProfileMegamarketToken,
+        private readonly MessageDispatchInterface $messageDispatch,
     ) {
         parent::__construct();
-
-        $this->allProductPrice = $allProductPrice;
-        $this->messageDispatch = $messageDispatch;
-        $this->logger = $logger;
-    }
-
-    protected function configure(): void
-    {
-        $this->addArgument('profile', InputArgument::OPTIONAL, 'Идентификатор профиля');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $io = new SymfonyStyle($input, $output);
+        $this->io = new SymfonyStyle($input, $output);
 
-        $profile = $input->getArgument('profile');
+        /** Получаем активные токены авторизации профилей Yandex Market */
+        $profiles = $this->allProfileMegamarketToken
+            ->onlyActiveToken()
+            ->findAll();
 
-        if(!$profile)
+        $profiles = iterator_to_array($profiles);
+
+        $helper = $this->getHelper('question');
+
+        $questions[] = 'Все';
+
+        foreach($profiles as $quest)
         {
-            $io->error("Не указан идентификатор профиля пользователя. Пример:".PHP_EOL
-                ." php bin/console baks:megamarket:stocks <UID>");
-            return Command::INVALID;
+            $questions[] = $quest->getAttr();
         }
 
-        $profile = new UserProfileUid($profile);
+        $question = new ChoiceQuestion(
+            'Профиль пользователя',
+            $questions,
+            0
+        );
+
+        $profileName = $helper->ask($input, $output, $question);
+
+        if($profileName === 'Все')
+        {
+            /** @var UserProfileUid $profile */
+            foreach($profiles as $profile)
+            {
+                $this->update($profile);
+            }
+        }
+        else
+        {
+            $UserProfileUid = null;
+
+            foreach($profiles as $profile)
+            {
+                if($profile->getAttr() === $profileName)
+                {
+                    /* Присваиваем профиль пользователя */
+                    $UserProfileUid = $profile;
+                    break;
+                }
+            }
+
+            if($UserProfileUid)
+            {
+                $this->update($UserProfileUid);
+            }
+        }
+
+        $this->io->success('Остатки Megamarket успешно обновлены');
+
+        return Command::SUCCESS;
+    }
+
+    public function update(UserProfileUid $profile): void
+    {
+        $this->io->note(sprintf('Обновляем профиль %s', $profile->getAttr()));
 
         $allProducts = $this->allProductPrice->findAll();
 
         foreach($allProducts as $product)
         {
             /** Если не указана стоимость - остаток 0 */
-            $quantity = $product['product_price'] ? $product['product_quantity'] : 0;
+            $quantity = $product['product_price'] ? max(0, $product['product_quantity']) : 0;
 
             /** Если не указаны параметры упаковки - остаток 0 */
             if(
-                empty($product['product_parameter_length']) ||
-                empty($product['product_parameter_width']) ||
-                empty($product['product_parameter_height']) ||
-                empty($product['product_parameter_weight'])
+                $quantity !== 0 && (
+                    empty($product['product_parameter_length']) ||
+                    empty($product['product_parameter_width']) ||
+                    empty($product['product_parameter_height']) ||
+                    empty($product['product_parameter_weight'])
+                )
             ) {
                 $quantity = 0;
 
@@ -103,11 +146,8 @@ class MegamarketPostStocksCommand extends Command
                 $quantity
             );
 
-            $this->messageDispatch->dispatch($MegamarketProductStocksMessage, transport: 'megamarket-products');
-
+            $this->messageDispatch->dispatch($MegamarketProductStocksMessage);
+            $this->io->text(sprintf('Обновили остаток артикула %s', $product['product_article']));
         }
-
-        return Command::SUCCESS;
     }
-
 }
