@@ -35,11 +35,6 @@ use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
 use BaksDev\Products\Product\Type\Offers\Variation\Id\ProductVariationUid;
 use BaksDev\Products\Product\Type\Offers\Variation\Modification\Id\ProductModificationUid;
-use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
-use BaksDev\Yandex\Market\Products\Messenger\Card\YaMarketProductsStocksUpdate\YaMarketProductsStocksMessage;
-use BaksDev\Yandex\Market\Products\Repository\Card\OrderYaMarketCard\OrderProductsYaMarketCardInterface;
-use BaksDev\Yandex\Market\Products\Type\Card\Event\YaMarketProductsCardEventUid;
-use BaksDev\Yandex\Market\Products\Type\Card\Id\YaMarketProductsCardUid;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 

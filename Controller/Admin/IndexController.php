@@ -24,11 +24,7 @@
 namespace BaksDev\Megamarket\Products\Controller\Admin;
 
 use BaksDev\Core\Controller\AbstractController;
-use BaksDev\Core\Form\Search\SearchDTO;
-use BaksDev\Core\Form\Search\SearchForm;
 use BaksDev\Core\Listeners\Event\Security\RoleSecurity;
-use BaksDev\Products\Product\Forms\ProductFilter\Admin\ProductFilterDTO;
-use BaksDev\Products\Product\Forms\ProductFilter\Admin\ProductFilterForm;
 use BaksDev\Megamarket\Products\Repository\Card\PaginatorYaMarketProductsCard\PaginatorYaMarketProductsCardInterface;
 use BaksDev\Megamarket\Products\Repository\Cards\AllWbProductCard\AllWbProductCardInterface;
 use Symfony\Component\HttpFoundation\Request;

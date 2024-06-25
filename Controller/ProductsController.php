@@ -25,9 +25,7 @@ namespace BaksDev\Megamarket\Products\Controller;
 
 use BaksDev\Core\Controller\AbstractController;
 use BaksDev\Core\Repository\SettingsMain\SettingsMainInterface;
-use BaksDev\Core\Type\UidType\ParamConverter;
 use BaksDev\Products\Category\Repository\AllCategoryByMenu\AllCategoryByMenuInterface;
-use BaksDev\Products\Category\Type\Id\CategoryProductUid;
 use BaksDev\Products\Product\Repository\AllProductsByCategory\AllProductsByCategoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;

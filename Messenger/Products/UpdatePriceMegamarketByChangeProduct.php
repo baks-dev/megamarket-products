@@ -25,22 +25,13 @@ declare(strict_types=1);
 
 namespace BaksDev\Megamarket\Products\Messenger\Products;
 
-use BaksDev\Core\Cache\AppCacheInterface;
 use BaksDev\Core\Messenger\MessageDispatchInterface;
 use BaksDev\Megamarket\Products\Messenger\MegamarketProductPriceUpdate\MegamarketProductPriceMessage;
-use BaksDev\Megamarket\Products\Messenger\MegamarketProductStocksUpdate\MegamarketProductStocksMessage;
 use BaksDev\Megamarket\Products\Repository\AllProducts\MegamarketAllProductInterface;
 use BaksDev\Megamarket\Repository\AllProfileToken\AllProfileMegamarketTokenInterface;
 use BaksDev\Products\Product\Messenger\ProductMessage;
-use BaksDev\Products\Product\Type\Event\ProductEventUid;
-use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
-use BaksDev\Products\Product\Type\Offers\Variation\Id\ProductVariationUid;
-use BaksDev\Products\Product\Type\Offers\Variation\Modification\Id\ProductModificationUid;
 use BaksDev\Reference\Currency\Type\Currency;
 use BaksDev\Reference\Money\Type\Money;
-use BaksDev\Yandex\Market\Products\Repository\Card\ProductYaMarketCard\ProductsYaMarketCardInterface;
-use BaksDev\Yandex\Market\Products\Type\Card\Event\YaMarketProductsCardEventUid;
-use BaksDev\Yandex\Market\Products\Type\Card\Id\YaMarketProductsCardUid;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 

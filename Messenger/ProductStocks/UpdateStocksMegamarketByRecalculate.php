@@ -30,8 +30,6 @@ use BaksDev\Megamarket\Products\Messenger\MegamarketProductStocksUpdate\Megamark
 use BaksDev\Megamarket\Products\Repository\AllProducts\MegamarketAllProductInterface;
 use BaksDev\Megamarket\Repository\AllProfileToken\AllProfileMegamarketTokenInterface;
 use BaksDev\Products\Stocks\Messenger\Products\Recalculate\RecalculateProductMessage;
-use BaksDev\Yandex\Market\Products\Messenger\Card\YaMarketProductsStocksUpdate\YaMarketProductsStocksMessage;
-use BaksDev\Yandex\Market\Products\Repository\Card\CardByCriteria\YaMarketProductsCardByCriteriaInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
