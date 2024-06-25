@@ -103,26 +103,28 @@ final class UpdateStocksMegamarketByIncoming
             ->onlyActiveToken()
             ->findAll();
 
-        /** @var ProductStockProduct $itemStocks */
-        foreach($productsStocks as $itemStocks)
+        foreach($profiles as $profile)
         {
-            /** Получаем активное состояние продукта */
-            $productsProduct = $this->megamarketAllProduct
-                ->product($itemStocks->getProduct())
-                ->offer($itemStocks->getOffer())
-                ->variation($itemStocks->getVariation())
-                ->modification($itemStocks->getModification())
-                ->findAll();
-
-            if(empty($productsProduct))
+            /** @var ProductStockProduct $itemStocks */
+            foreach($productsStocks as $itemStocks)
             {
-                continue;
-            }
+                /** Получаем активное состояние продукта */
+                $productsProduct = $this->megamarketAllProduct
+                    ->product($itemStocks->getProduct())
+                    ->offer($itemStocks->getOffer())
+                    ->variation($itemStocks->getVariation())
+                    ->modification($itemStocks->getModification())
+                    ->findAll();
 
-            foreach($productsProduct as $itemProduct)
-            {
-                foreach($profiles as $profile)
+                if(empty($productsProduct))
                 {
+                    continue;
+                }
+
+
+                foreach($productsProduct as $itemProduct)
+                {
+
                     /** Если не указана стоимость - остаток 0 */
                     $quantity = $itemProduct['product_price'] ? $itemProduct['product_quantity'] : 0;
 

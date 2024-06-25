@@ -41,23 +41,15 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 #[AsMessageHandler(priority: 100)]
 final class UpdateStocksMegamarketByChangeStatus
 {
-    private MessageDispatchInterface $messageDispatch;
-    private OrderProductsInterface $orderProducts;
-    private MegamarketAllProductInterface $megamarketAllProduct;
-    private AllProfileMegamarketTokenInterface $allProfileMegamarketToken;
     private LoggerInterface $logger;
 
     public function __construct(
-        OrderProductsInterface $orderProducts,
-        MegamarketAllProductInterface $megamarketAllProduct,
-        AllProfileMegamarketTokenInterface $allProfileMegamarketToken,
+        private readonly OrderProductsInterface $orderProducts,
+        private readonly MegamarketAllProductInterface $megamarketAllProduct,
+        private readonly AllProfileMegamarketTokenInterface $allProfileMegamarketToken,
+        private readonly MessageDispatchInterface $messageDispatch,
         LoggerInterface $megamarketProductsLogger,
-        MessageDispatchInterface $messageDispatch,
     ) {
-        $this->messageDispatch = $messageDispatch;
-        $this->orderProducts = $orderProducts;
-        $this->megamarketAllProduct = $megamarketAllProduct;
-        $this->allProfileMegamarketToken = $allProfileMegamarketToken;
         $this->logger = $megamarketProductsLogger;
     }
 
@@ -66,29 +58,35 @@ final class UpdateStocksMegamarketByChangeStatus
      */
     public function __invoke(OrderMessage $message): void
     {
+        /** Получаем всю продукцию в заказе */
+        $productsOrder = $this->orderProducts
+            ->fetchAllOrderProducts($message->getId());
+
+        if(empty($productsOrder))
+        {
+            return;
+        }
+
         /** Получаем все профили для обновления */
         $profiles = $this->allProfileMegamarketToken
             ->onlyActiveToken()
             ->findAll();
 
-        /** Получаем всю продукцию в заказе */
-        $productsOrder = $this->orderProducts
-            ->fetchAllOrderProducts($message->getId());
-
-        foreach($productsOrder as $itemOrder)
+        foreach($profiles as $profile)
         {
-            /** Получаем активное состояние продукта */
-            $productsProduct = $this->megamarketAllProduct
-                ->event(new ProductEventUid($itemOrder['product_event']))
-                ->offer(new ProductOfferUid($itemOrder['product_offer']))
-                ->variation(new ProductVariationUid($itemOrder['product_variation']))
-                ->modification(new ProductModificationUid($itemOrder['product_modification']))
-                ->findAll();
-
-            foreach($productsProduct as $itemProduct)
+            foreach($productsOrder as $itemOrder)
             {
-                foreach($profiles as $profile)
+                /** Получаем активное состояние продукта */
+                $productsProduct = $this->megamarketAllProduct
+                    ->event(new ProductEventUid($itemOrder['product_event']))
+                    ->offer(new ProductOfferUid($itemOrder['product_offer']))
+                    ->variation(new ProductVariationUid($itemOrder['product_variation']))
+                    ->modification(new ProductModificationUid($itemOrder['product_modification']))
+                    ->findAll();
+
+                foreach($productsProduct as $itemProduct)
                 {
+
                     /** Если не указана стоимость - остаток 0 */
                     $quantity = $itemProduct['product_price'] ? max(0, $itemProduct['product_quantity']) : 0;
 

@@ -38,20 +38,15 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 #[AsMessageHandler]
 final class UpdatePriceMegamarketByChangeProduct
 {
-    private MessageDispatchInterface $messageDispatch;
-    private AllProfileMegamarketTokenInterface $allProfileMegamarketToken;
-    private MegamarketAllProductInterface $megamarketAllProduct;
     private LoggerInterface $logger;
 
     public function __construct(
-        AllProfileMegamarketTokenInterface $allProfileMegamarketToken,
-        MegamarketAllProductInterface $megamarketAllProduct,
+        private readonly AllProfileMegamarketTokenInterface $allProfileMegamarketToken,
+        private readonly MegamarketAllProductInterface $megamarketAllProduct,
+        private readonly MessageDispatchInterface $messageDispatch,
         LoggerInterface $megamarketProductsLogger,
-        MessageDispatchInterface $messageDispatch,
     ) {
-        $this->messageDispatch = $messageDispatch;
-        $this->allProfileMegamarketToken = $allProfileMegamarketToken;
-        $this->megamarketAllProduct = $megamarketAllProduct;
+
         $this->logger = $megamarketProductsLogger;
     }
 
@@ -60,19 +55,24 @@ final class UpdatePriceMegamarketByChangeProduct
      */
     public function __invoke(ProductMessage $message): void
     {
-        /** Получаем все профили для обновления */
-        $profiles = $this->allProfileMegamarketToken
-            ->onlyActiveToken()
-            ->findAll();
-
         /** Получаем активное состояние продукта */
         $productsProduct = $this->megamarketAllProduct
             ->product($message->getId())
             ->findAll();
 
-        foreach($productsProduct as $product)
+        if(empty($productsProduct))
         {
-            foreach($profiles as $profile)
+            return;
+        }
+
+        /** Получаем все профили для обновления */
+        $profiles = $this->allProfileMegamarketToken
+            ->onlyActiveToken()
+            ->findAll();
+
+        foreach($profiles as $profile)
+        {
+            foreach($productsProduct as $product)
             {
                 $currency = new Currency($product['product_currency']);
 

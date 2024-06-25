@@ -60,11 +60,6 @@ final class UpdateStocksMegamarketByRecalculate
      */
     public function __invoke(RecalculateProductMessage $product): void
     {
-        /** Получаем все профили для обновления */
-        $profiles = $this->allProfileMegamarketToken
-            ->onlyActiveToken()
-            ->findAll();
-
         /** Получаем активное состояние продукта */
         $productsProduct = $this->megamarketAllProduct
             ->product($product->getProduct())
@@ -78,10 +73,16 @@ final class UpdateStocksMegamarketByRecalculate
             return;
         }
 
-        foreach($productsProduct as $itemProduct)
+        /** Получаем все профили для обновления */
+        $profiles = $this->allProfileMegamarketToken
+            ->onlyActiveToken()
+            ->findAll();
+
+        foreach($profiles as $profile)
         {
-            foreach($profiles as $profile)
+            foreach($productsProduct as $itemProduct)
             {
+
                 /** Если не указана стоимость - остаток 0 */
                 $quantity = $itemProduct['product_price'] ? $itemProduct['product_quantity'] : 0;
 
