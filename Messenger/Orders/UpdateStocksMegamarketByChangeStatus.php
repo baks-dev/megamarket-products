@@ -60,7 +60,8 @@ final class UpdateStocksMegamarketByChangeStatus
     {
         /** Получаем всю продукцию в заказе */
         $productsOrder = $this->orderProducts
-            ->fetchAllOrderProducts($message->getId());
+            ->order($message->getId())
+            ->findAllProducts();
 
         if(empty($productsOrder))
         {
