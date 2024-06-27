@@ -1,6 +1,6 @@
 # BaksDev Products Megamarket
 
-[![Version](https://img.shields.io/badge/version-7.1.14-blue)](https://github.com/baks-dev/megamarket-products/releases)
+[![Version](https://img.shields.io/badge/version-7.1.15-blue)](https://github.com/baks-dev/megamarket-products/releases)
 ![php 8.3+](https://img.shields.io/badge/php-min%208.3-red.svg)
 
 Модуль продукции Megamarket
@@ -38,4 +38,3 @@ php bin/phpunit --group=megamarket-products
 ## Лицензия ![License](https://img.shields.io/badge/MIT-green)
 
 The MIT License (MIT). Обратитесь к [Файлу лицензии](LICENSE.md) за дополнительной информацией.
-
