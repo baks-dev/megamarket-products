@@ -59,7 +59,7 @@ final class MegamarketProductPriceUpdate
                 $message->getArticle(),
                 (string) $message->getPrice()
             ),
-            [__FILE__.':'.__LINE__, 'profile' => (string) $message->getProfile()]
+            [self::class.':'.__LINE__, 'profile' => (string) $message->getProfile()]
         );
     }
 }

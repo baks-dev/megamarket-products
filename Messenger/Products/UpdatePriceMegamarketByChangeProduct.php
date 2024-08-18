@@ -100,7 +100,7 @@ final class UpdatePriceMegamarketByChangeProduct
                 // длина + ширина + высота * 5 и переводим с копейками * 100
                 $rate = ($product['product_parameter_length'] + $product['product_parameter_width'] + $product['product_parameter_height']) / 2 * 100;
                 $result_price = $product['product_price'] + $percent + $rate;
-                $price = new Money($result_price / 100);
+                $price = new Money($result_price, true);
 
                 $MegamarketProductPriceMessage = new MegamarketProductPriceMessage(
                     $profile,

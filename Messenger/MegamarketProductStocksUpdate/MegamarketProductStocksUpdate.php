@@ -58,7 +58,7 @@ final class MegamarketProductStocksUpdate
                 $message->getArticle(),
                 $message->getQuantity()
             ),
-            [__FILE__.':'.__LINE__, 'profile' => (string) $message->getProfile()]
+            [self::class.':'.__LINE__, 'profile' => (string) $message->getProfile()]
         );
     }
 }
