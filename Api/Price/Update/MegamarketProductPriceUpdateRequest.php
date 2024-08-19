@@ -89,7 +89,7 @@ final class MegamarketProductPriceUpdateRequest extends Megamarket
         {
             $content['error'][0] = self::class.':'.__LINE__;
 
-            $this->logger->critical(sprintf('Ошибка обновления стоимости: %s', $this->article), $content['error']);
+            $this->logger->critical(sprintf('Megamarket: Ошибка обновления стоимости артикула %s', $this->article), $content['error']);
 
             return false;
         }

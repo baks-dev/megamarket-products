@@ -82,7 +82,7 @@ final class MegamarketProductStocksUpdateRequest extends Megamarket
         {
             $content['error'][0] = self::class.':'.__LINE__;
 
-            $this->logger->critical(sprintf('Ошибка обновления остатков: %s', $this->article), $content['error']);
+            $this->logger->critical(sprintf('Megamarket: Ошибка обновления остатков артикула %s', $this->article), $content['error']);
 
             return false;
         }
