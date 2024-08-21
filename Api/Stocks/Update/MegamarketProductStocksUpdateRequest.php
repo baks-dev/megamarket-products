@@ -31,6 +31,8 @@ use stdClass;
 
 final class MegamarketProductStocksUpdateRequest extends Megamarket
 {
+    private int $retry = 0;
+
     private ?string $article = null;
 
     private ?int $total = null;
@@ -78,13 +80,23 @@ final class MegamarketProductStocksUpdateRequest extends Megamarket
 
         $content = $response->toArray(false);
 
+        /** Статус всегда возвращает 200, делаем ретрай сами */
         if(isset($content['error']))
         {
-            $content['error'][0] = self::class.':'.__LINE__;
+            // Если истрачено 5 попыток с задержкой в прогрессии
+            if($this->retry > 32)
+            {
+                $content['error'][0] = self::class.':'.__LINE__;
 
-            $this->logger->critical(sprintf('Megamarket: Ошибка обновления остатков артикула %s', $this->article), $content['error']);
+                $this->logger->critical(sprintf('Megamarket: Ошибка обновления остатков артикула %s', $this->article), $content['error']);
 
-            return false;
+                return false;
+            }
+
+            sleep($this->retry);
+
+            $this->retry *= 2;
+            $this->update();
         }
 
         return isset($content['success']) && $content['success'] === 1;

@@ -32,6 +32,8 @@ use stdClass;
 
 final class MegamarketProductPriceUpdateRequest extends Megamarket
 {
+    private int $retry = 0;
+
     private ?string $article = null;
 
     private ?int $price = null;
@@ -87,11 +89,20 @@ final class MegamarketProductPriceUpdateRequest extends Megamarket
 
         if(isset($content['error']))
         {
-            $content['error'][0] = self::class.':'.__LINE__;
+            // Если истрачено 5 попыток с задержкой в прогрессии
+            if($this->retry > 32)
+            {
+                $content['error'][0] = self::class.':'.__LINE__;
 
-            $this->logger->critical(sprintf('Megamarket: Ошибка обновления стоимости артикула %s', $this->article), $content['error']);
+                $this->logger->critical(sprintf('Megamarket: Ошибка обновления стоимости артикула %s', $this->article), $content['error']);
 
-            return false;
+                return false;
+            }
+
+            sleep($this->retry);
+
+            $this->retry *= 2;
+            $this->update();
         }
 
         return isset($content['success']) && $content['success'] === 1;
