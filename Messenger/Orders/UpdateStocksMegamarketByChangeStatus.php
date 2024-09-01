@@ -37,6 +37,7 @@ use BaksDev\Products\Product\Type\Offers\Variation\Id\ProductVariationUid;
 use BaksDev\Products\Product\Type\Offers\Variation\Modification\Id\ProductModificationUid;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
+use Symfony\Component\Messenger\Stamp\DelayStamp;
 
 #[AsMessageHandler(priority: 100)]
 final class UpdateStocksMegamarketByChangeStatus
@@ -119,6 +120,7 @@ final class UpdateStocksMegamarketByChangeStatus
                     /** Добавляем в очередь на обновление */
                     $this->messageDispatch->dispatch(
                         $MegamarketProductStocksMessage,
+                        stamps: [new DelayStamp(2000)], // задержка 2 сек для обновления карточки
                         transport: 'megamarket-products'
                     );
                 }
