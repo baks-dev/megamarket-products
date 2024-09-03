@@ -133,29 +133,34 @@ class MegamarketPostStocksCommand extends Command
                 continue;
             }
 
-            /** Если не указана стоимость - остаток 0 */
-            $quantity = $product['product_price'] ? max(0, $product['product_quantity']) : 0;
+            if(empty($product['product_price']))
+            {
+                $this->io->warning(
+                    sprintf('Не указана стоимость продукции %s', $product['product_article'])
+                );
 
-            /** Если не указаны параметры упаковки - остаток 0 */
+                continue;
+            }
+
+
+            /** Если не указаны параметры упаковки 0 */
             if(
-                $quantity !== 0 && (
-                    empty($product['product_parameter_length']) ||
-                    empty($product['product_parameter_width']) ||
-                    empty($product['product_parameter_height']) ||
-                    empty($product['product_parameter_weight'])
-                )
-            ) {
-                $quantity = 0;
+                empty($product['product_parameter_length']) ||
+                empty($product['product_parameter_width']) ||
+                empty($product['product_parameter_height']) ||
+                empty($product['product_parameter_weight'])
 
+            ) {
                 $this->io->warning(
                     sprintf('Не указаны параметры упаковки артикула %s', $product['product_article'])
                 );
+
+                continue;
             }
 
             $MegamarketProductStocksMessage = new MegamarketProductStocksMessage(
                 $profile,
-                $product['product_article'],
-                $quantity
+                $product['product_article']
             );
 
             $this->messageDispatch->dispatch($MegamarketProductStocksMessage);

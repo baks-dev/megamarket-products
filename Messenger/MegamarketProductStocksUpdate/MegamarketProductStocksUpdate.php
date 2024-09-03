@@ -26,6 +26,7 @@ declare(strict_types=1);
 namespace BaksDev\Megamarket\Products\Messenger\MegamarketProductStocksUpdate;
 
 use BaksDev\Megamarket\Products\Api\Stocks\Update\MegamarketProductStocksUpdateRequest;
+use BaksDev\Products\Product\Repository\ProductQuantity\ProductQuantityByArticle\ProductQuantityByArticleInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
@@ -36,29 +37,45 @@ final class MegamarketProductStocksUpdate
 
     public function __construct(
         private readonly MegamarketProductStocksUpdateRequest $request,
+        private readonly ProductQuantityByArticleInterface $productQuantityByArticle,
         LoggerInterface $megamarketProductsLogger,
     ) {
         $this->logger = $megamarketProductsLogger;
     }
 
     /**
-     * Обновляем базовую цену товара на Megamarket
+     * Обновляем наличие продукции
      */
     public function __invoke(MegamarketProductStocksMessage $message): void
     {
+        /** Получаем доступное наличие по артикулу */
+        $Quantity = $this->productQuantityByArticle->find($message->getArticle()) ?: 0;
+
+        if($Quantity === false)
+        {
+            $this->logger->info(
+                sprintf('megamarket-products: Невозможно определить товар c артикулом %s для обновления остатка', $message->getArticle()),
+                [self::class.':'.__LINE__]
+            );
+        }
+
         $this->request
             ->profile($message->getProfile())
             ->article($message->getArticle())
-            ->total($message->getQuantity())
+            ->total($Quantity)
             ->update();
+
 
         $this->logger->info(
             sprintf(
                 'Обновили остатки товара с артикулом %s => %s',
                 $message->getArticle(),
-                $message->getQuantity()
+                $Quantity
             ),
-            [self::class.':'.__LINE__, 'profile' => (string) $message->getProfile()]
+            [
+                self::class.':'.__LINE__,
+                'profile' => (string) $message->getProfile()
+            ]
         );
     }
 }

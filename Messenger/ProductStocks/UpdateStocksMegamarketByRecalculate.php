@@ -32,6 +32,7 @@ use BaksDev\Megamarket\Repository\AllProfileToken\AllProfileMegamarketTokenInter
 use BaksDev\Products\Stocks\Messenger\Products\Recalculate\RecalculateProductMessage;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
+use Symfony\Component\Messenger\Stamp\DelayStamp;
 
 #[AsMessageHandler(priority: 0)]
 final class UpdateStocksMegamarketByRecalculate
@@ -83,33 +84,43 @@ final class UpdateStocksMegamarketByRecalculate
             foreach($productsProduct as $itemProduct)
             {
 
-                /** Если не указана стоимость - остаток 0 */
-                $quantity = $itemProduct['product_price'] ? $itemProduct['product_quantity'] : 0;
+                if(empty($itemProduct['product_price']))
+                {
+                    $this->logger->critical(
+                        sprintf('Не указана стоимость продукции артикула %s', $itemProduct['product_article'])
+                    );
 
-                /** Если не указаны параметры упаковки - остаток 0 */
+                    continue;
+                }
+
+                /**
+                 * Если не указаны параметры упаковки - остаток 0
+                 * (на случай, если карточка с артикулом добавлена на Megamarket)
+                 */
                 if(
                     empty($itemProduct['product_parameter_length']) ||
                     empty($itemProduct['product_parameter_width']) ||
                     empty($itemProduct['product_parameter_height']) ||
                     empty($itemProduct['product_parameter_weight'])
-                ) {
-                    $quantity = 0;
 
+                ) {
                     $this->logger->critical(
                         sprintf('Не указаны параметры упаковки артикула %s', $itemProduct['product_article'])
                     );
+
+                    continue;
                 }
 
                 $MegamarketProductStocksMessage = new MegamarketProductStocksMessage(
                     $profile,
-                    $itemProduct['product_article'],
-                    $quantity
+                    $itemProduct['product_article']
                 );
 
                 /** Добавляем в очередь на обновление */
                 $this->messageDispatch->dispatch(
                     $MegamarketProductStocksMessage,
-                    transport: 'megamarket-products'
+                    stamps: [new DelayStamp(3000)], // задержка 3 сек для обновления карточки
+                    transport: $profile
                 );
             }
         }

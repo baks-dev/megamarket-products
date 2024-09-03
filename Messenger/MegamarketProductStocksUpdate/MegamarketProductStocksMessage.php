@@ -39,16 +39,10 @@ final class MegamarketProductStocksMessage
      */
     private string $article;
 
-    /**
-     * Наличие
-     */
-    private int $quantity;
-
 
     public function __construct(
         UserProfileUid|string $profile,
-        string $article,
-        int $quantity
+        string $article
     ) {
 
         if(!$profile instanceof UserProfileUid)
@@ -58,7 +52,6 @@ final class MegamarketProductStocksMessage
 
         $this->profile = $profile;
         $this->article = $article;
-        $this->quantity = $quantity;
     }
 
     /**
@@ -75,14 +68,6 @@ final class MegamarketProductStocksMessage
     public function getArticle(): string
     {
         return $this->article;
-    }
-
-    /**
-     * Quantity
-     */
-    public function getQuantity(): int
-    {
-        return $this->quantity;
     }
 
 }
