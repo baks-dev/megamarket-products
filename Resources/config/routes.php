@@ -21,33 +21,19 @@
  *  THE SOFTWARE.
  */
 
-namespace Symfony\Component\DependencyInjection\Loader\Configurator;
+use BaksDev\Megamarket\Products\BaksDevMegamarketProductsBundle;
+use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
 
-use Symfony\Config\FrameworkConfig;
+return function (RoutingConfigurator $routes) {
 
-return static function(FrameworkConfig $framework) {
-    
-    $messenger = $framework->messenger();
+    $MODULE = BaksDevMegamarketProductsBundle::PATH;
 
-    $messenger
-        ->transport('megamarket-products')
-        ->dsn('redis://%env(REDIS_PASSWORD)%@%env(REDIS_HOST)%:%env(REDIS_PORT)%?auto_setup=true')
-        ->options(['stream' => 'megamarket-products'])
-        ->failureTransport('failed-megamarket-products')
-        ->retryStrategy()
-        ->maxRetries(3)
-        ->delay(1000)
-        ->maxDelay(0)
-        ->multiplier(3) // увеличиваем задержку перед каждой повторной попыткой
-        ->service(null)
-
-    ;
-
-    $failure = $framework->messenger();
-
-    $failure->transport('failed-megamarket-products')
-        ->dsn('%env(MESSENGER_TRANSPORT_DSN)%')
-        ->options(['queue_name' => 'failed-megamarket-products'])
-    ;
-
+    $routes->import(
+        $MODULE.'Controller',
+        'attribute',
+        false,
+        $MODULE.implode(DIRECTORY_SEPARATOR, ['Controller', '**', '*Test.php'])
+    )
+        ->prefix(\BaksDev\Core\Type\Locale\Locale::routes())
+        ->namePrefix('megamarket-products:');
 };

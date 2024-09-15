@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2023.  Baks.dev <admin@baks.dev>
+ *  Copyright 2024.  Baks.dev <admin@baks.dev>
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -21,19 +21,14 @@
  *  THE SOFTWARE.
  */
 
-use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
+namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
-return function (RoutingConfigurator $routes) {
+use BaksDev\Megamarket\Products\BaksDevMegamarketProductsBundle;
+use Symfony\Config\FrameworkConfig;
 
-    $MODULE = substr(__DIR__, 0, strpos(__DIR__, "Resources"));
+return static function (FrameworkConfig $config) {
 
-    $routes->import(
-        $MODULE.'Controller',
-        'attribute',
-        false,
-        $MODULE.'Controller/**/*Test.php'
-    )
-        ->prefix(\BaksDev\Core\Type\Locale\Locale::routes())
-        ->namePrefix('megamarket-products:')
-    ;
+    $config
+        ->translator()
+        ->paths([BaksDevMegamarketProductsBundle::PATH.implode(DIRECTORY_SEPARATOR, ['Resources', 'translations', ''])]); // .'Resources/translations/']);
 };
