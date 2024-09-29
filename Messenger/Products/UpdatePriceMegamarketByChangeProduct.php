@@ -90,24 +90,20 @@ final class UpdatePriceMegamarketByChangeProduct
                     continue;
                 }
 
-                /**
-                 * Перерасчет стоимости продукции
-                 */
 
-                // 15% комиссии
-                $percent = $product['product_price'] / 100 * 5;
-
-                // длина + ширина + высота * 5 и переводим с копейками * 100
-                //$rate = ($product['product_parameter_length'] + $product['product_parameter_width'] + $product['product_parameter_height']) / 2 * 100;
-                $rate = 0;
-                $result_price = $product['product_price'] + $percent + $rate;
-                $price = new Money($result_price, true);
+                $price = new Money($product['product_price'], true);
 
                 $MegamarketProductPriceMessage = new MegamarketProductPriceMessage(
                     $profile,
                     $product['product_article'],
                     $price,
                     $currency
+                );
+
+                $MegamarketProductPriceMessage->setParameter(
+                    $product['product_parameter_width'],
+                    $product['product_parameter_height'],
+                    $product['product_parameter_length']
                 );
 
                 $this->messageDispatch->dispatch(

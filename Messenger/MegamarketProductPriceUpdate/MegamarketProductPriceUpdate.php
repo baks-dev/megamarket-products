@@ -50,7 +50,12 @@ final class MegamarketProductPriceUpdate
         $this->request
             ->profile($message->getProfile())
             ->article($message->getArticle())
-            ->price($message->getPrice())
+            ->price(
+                $message->getPrice(),
+                $message->getWidth(),
+                $message->getHeight(),
+                $message->getLength(),
+            )
             ->update();
 
         $this->logger->info(

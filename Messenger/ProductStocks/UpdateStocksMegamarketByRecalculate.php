@@ -37,22 +37,14 @@ use Symfony\Component\Messenger\Stamp\DelayStamp;
 #[AsMessageHandler(priority: 0)]
 final class UpdateStocksMegamarketByRecalculate
 {
-    private MessageDispatchInterface $messageDispatch;
-    private AllProfileMegamarketTokenInterface $allProfileMegamarketToken;
-    private MegamarketAllProductInterface $megamarketAllProduct;
     private LoggerInterface $logger;
 
     public function __construct(
-        AllProfileMegamarketTokenInterface $allProfileMegamarketToken,
-        MegamarketAllProductInterface $megamarketAllProduct,
+        private readonly AllProfileMegamarketTokenInterface $allProfileMegamarketToken,
+        private readonly MegamarketAllProductInterface $megamarketAllProduct,
+        private readonly MessageDispatchInterface $messageDispatch,
         LoggerInterface $megamarketProductsLogger,
-        MessageDispatchInterface $messageDispatch
     ) {
-
-
-        $this->allProfileMegamarketToken = $allProfileMegamarketToken;
-        $this->messageDispatch = $messageDispatch;
-        $this->megamarketAllProduct = $megamarketAllProduct;
         $this->logger = $megamarketProductsLogger;
     }
 
@@ -120,7 +112,7 @@ final class UpdateStocksMegamarketByRecalculate
                 $this->messageDispatch->dispatch(
                     $MegamarketProductStocksMessage,
                     stamps: [new DelayStamp(3000)], // задержка 3 сек для обновления карточки
-                    transport: $profile
+                    transport: (string) $profile
                 );
             }
         }

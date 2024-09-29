@@ -52,6 +52,12 @@ final class MegamarketProductPriceMessage
     private Currency $currency;
 
 
+    /** Параметры упаковки для расчета  */
+    private int $width = 0;
+    private int $height = 0;
+    private int $length = 0;
+
+
     public function __construct(
         UserProfileUid|string $profile,
         string $article,
@@ -111,4 +117,37 @@ final class MegamarketProductPriceMessage
     {
         return $this->currency;
     }
+
+
+    public function setParameter(int $width, int $height, int $length): void
+    {
+        $this->width = $width;
+        $this->height = $height;
+        $this->length = $length;
+    }
+
+    /**
+     * Width
+     */
+    public function getWidth(): int
+    {
+        return $this->width;
+    }
+
+    /**
+     * Height
+     */
+    public function getHeight(): int
+    {
+        return $this->height;
+    }
+
+    /**
+     * Length
+     */
+    public function getLength(): int
+    {
+        return $this->length;
+    }
+
 }

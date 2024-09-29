@@ -46,8 +46,6 @@ final class ProductsController extends AbstractController
         AllProductsByCategoryInterface $productsByCategory
     ): Response {
 
-
-
         $response = $this->render(
             [
                 'category' => $allCategory->findAll(),

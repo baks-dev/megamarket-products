@@ -44,11 +44,35 @@ final class MegamarketProductPriceUpdateRequest extends Megamarket
         return $this;
     }
 
-    public function price(int|float|Money $price): self
-    {
+    public function price(
+        int|float|Money $price,
+        int $width = 0,
+        int $height = 0,
+        int $length = 0
+    ): self {
+
         if($price instanceof Money)
         {
             $price = $price->getOnlyPositive();
+        }
+
+        /**
+         * Добавляем к стоимости Торговую наценку
+         */
+        if($this->getPercent())
+        {
+            $percent = $price / 100 * $this->getPercent();
+            $price += $percent;
+        }
+
+
+        /**
+         * Добавляем к стоимости Надбавку за габариты товара
+         */
+        if($this->getRate())
+        {
+            $rate = ($width + $height + $length) / 2 * 100;
+            $price += $rate;
         }
 
         $this->price = (int) $price;
@@ -58,6 +82,14 @@ final class MegamarketProductPriceUpdateRequest extends Megamarket
 
     public function update(): bool
     {
+        /**
+         * Выполнять операции запроса ТОЛЬКО в PROD окружении
+         */
+        if($this->isExecuteEnvironment() === false)
+        {
+            return true;
+        }
+
         if(empty($this->article))
         {
             throw new InvalidArgumentException('Invalid Argument $article');

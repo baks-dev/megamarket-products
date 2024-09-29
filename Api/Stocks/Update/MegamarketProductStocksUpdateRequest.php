@@ -51,6 +51,14 @@ final class MegamarketProductStocksUpdateRequest extends Megamarket
 
     public function update(): bool
     {
+        /**
+         * Выполнять операции запроса ТОЛЬКО в PROD окружении
+         */
+        if($this->isExecuteEnvironment() === false)
+        {
+            return true;
+        }
+
         if(empty($this->article))
         {
             throw new InvalidArgumentException('Invalid Argument $article');
