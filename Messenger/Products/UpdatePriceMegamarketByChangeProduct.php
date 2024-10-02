@@ -84,12 +84,16 @@ final class UpdatePriceMegamarketByChangeProduct
                     empty($product['product_parameter_weight'])
                 ) {
                     $this->logger->critical(
-                        sprintf('Не указаны параметры упаковки артикула %s', $product['product_article'])
+                        sprintf('megamarket-products: Не указаны параметры упаковки артикула %s', $product['product_article'])
                     );
 
                     continue;
                 }
 
+                if(empty($product['product_price']))
+                {
+                    continue;
+                }
 
                 $price = new Money($product['product_price'], true);
 

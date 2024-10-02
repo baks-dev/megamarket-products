@@ -47,6 +47,12 @@ final class MegamarketProductPriceUpdate
      */
     public function __invoke(MegamarketProductPriceMessage $message): void
     {
+        /** Не обновляем нулевую стоимость */
+        if(empty($message->getPrice()?->getValue()))
+        {
+            return;
+        }
+
         $this->request
             ->profile($message->getProfile())
             ->article($message->getArticle())
