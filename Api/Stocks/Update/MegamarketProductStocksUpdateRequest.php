@@ -26,6 +26,7 @@ declare(strict_types=1);
 namespace BaksDev\Megamarket\Products\Api\Stocks\Update;
 
 use BaksDev\Megamarket\Api\Megamarket;
+use Exception;
 use InvalidArgumentException;
 use stdClass;
 
@@ -69,24 +70,34 @@ final class MegamarketProductStocksUpdateRequest extends Megamarket
             throw new InvalidArgumentException('Invalid Argument $total');
         }
 
-        $response = $this->TokenHttpClient()->request(
-            'POST',
-            '/api/merchantIntegration/v1/offerService/stock/update',
-            ['json' => [
-                'meta' => new stdClass(),
-                'data' => [
-                    'token' => $this->getToken(),
-                    'stocks' => [
-                        [
-                            "offerId" => $this->article,
-                            "quantity" => $this->total
+
+        try
+        {
+            $response = $this->TokenHttpClient()->request(
+                'POST',
+                '/api/merchantIntegration/v1/offerService/stock/update',
+                ['json' => [
+                    'meta' => new stdClass(),
+                    'data' => [
+                        'token' => $this->getToken(),
+                        'stocks' => [
+                            [
+                                "offerId" => $this->article,
+                                "quantity" => max($this->total, 0)
+                            ]
                         ]
                     ]
-                ]
-            ]]
-        );
+                ]]
+            );
 
-        $content = $response->toArray(false);
+            $content = $response->toArray(false);
+        }
+        catch(Exception $exception)
+        {
+            $this->logger->critical(sprintf('megamarket: Ошибка обновления остатков артикула %s', $this->article), [$exception->getMessage()]);
+            return false;
+        }
+
 
         /** Статус всегда возвращает 200, делаем ретрай сами */
         if(isset($content['error']))
@@ -96,7 +107,7 @@ final class MegamarketProductStocksUpdateRequest extends Megamarket
             {
                 $content['error'][0] = self::class.':'.__LINE__;
 
-                $this->logger->critical(sprintf('Megamarket: Ошибка обновления остатков артикула %s', $this->article), $content['error']);
+                $this->logger->critical(sprintf('megamarket: Ошибка обновления остатков артикула %s', $this->article), $content['error']);
 
                 return false;
             }

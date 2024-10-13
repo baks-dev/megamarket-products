@@ -38,7 +38,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
  * Получаем карточки товаров и добавляем отсутствующие
  */
 #[AsCommand(
-    name: 'baks:megamarket:stocks',
+    name: 'baks:megamarket:post:stocks',
     description: 'Обновляет все остатки на продукцию'
 )]
 class MegamarketPostStocksCommand extends Command

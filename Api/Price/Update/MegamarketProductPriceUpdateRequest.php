@@ -27,6 +27,7 @@ namespace BaksDev\Megamarket\Products\Api\Price\Update;
 
 use BaksDev\Megamarket\Api\Megamarket;
 use BaksDev\Reference\Money\Type\Money;
+use Exception;
 use InvalidArgumentException;
 use stdClass;
 
@@ -100,24 +101,38 @@ final class MegamarketProductPriceUpdateRequest extends Megamarket
             throw new InvalidArgumentException('Invalid Argument price');
         }
 
-        $response = $this->TokenHttpClient()->request(
-            'POST',
-            '/api/merchantIntegration/v1/offerService/manualPrice/save',
-            ['json' => [
-                'meta' => new stdClass(),
-                'data' => [
-                    'token' => $this->getToken(),
-                    'prices' => [
-                        [
-                            "offerId" => $this->article,
-                            "price" => $this->price
+        try
+        {
+            $response = $this->TokenHttpClient()->request(
+                'POST',
+                '/api/merchantIntegration/v1/offerService/manualPrice/save',
+                ['json' => [
+                    'meta' => new stdClass(),
+                    'data' => [
+                        'token' => $this->getToken(),
+                        'prices' => [
+                            [
+                                "offerId" => $this->article,
+                                "price" => $this->price
+                            ]
                         ]
                     ]
-                ]
-            ]]
-        );
+                ]]
+            );
 
-        $content = $response->toArray(false);
+            $content = $response->toArray(false);
+
+        }
+        catch(Exception $exception)
+        {
+            $this->logger->critical(
+                sprintf('megamarket: Ошибка обновления стоимости артикула %s', $this->article),
+                [$exception->getMessage()]
+            );
+
+            return false;
+        }
+
 
         if(isset($content['error']))
         {
@@ -126,7 +141,7 @@ final class MegamarketProductPriceUpdateRequest extends Megamarket
             {
                 $content['error'][0] = self::class.':'.__LINE__;
 
-                $this->logger->critical(sprintf('Megamarket: Ошибка обновления стоимости артикула %s', $this->article), $content['error']);
+                $this->logger->critical(sprintf('megamarket: Ошибка обновления стоимости артикула %s', $this->article), $content['error']);
 
                 return false;
             }
