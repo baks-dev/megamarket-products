@@ -66,7 +66,10 @@ final class ProductsController extends AbstractController
             [
                 'category' => $allCategory->findAll(),
                 'settings' => $settingsMain->getSettingsMainAssociative($request->getHost(), $request->getLocale()),
-                'products' => $productsByCategory->fetchAllProductByCategory()],
+                'products' => $productsByCategory->fetchAllProductByCategory(),
+                'percent' => $MegamarketAuthorization->getPercent(),
+            ],
+
             file: 'export.html.twig'
         );
 

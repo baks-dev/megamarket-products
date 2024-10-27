@@ -78,12 +78,10 @@
                     </shipment-options> #}
 
 
-
-                    {# 15% комиссии #}
-                    {% set percent = card.product_price / 100 * 15 %}
+                    {% set commission = card.product_price / 100 * percent %}
                     {# длина + ширина + высота * 5 и переводлим в с копейками * 100 #}
                     {% set rate = (card.product_parameter_length + card.product_parameter_width + card.product_parameter_height) * 5 * 100 %}
-                    {% set result_price = card.product_price + percent + rate %}
+                    {% set result_price = card.product_price + commission + rate %}
 
                     <price>{{ (result_price / 100) ?: 'по запросу' }}</price>
                     <currencyId>{{ card.product_currency|upper }}</currencyId>
