@@ -21,7 +21,7 @@
  *  THE SOFTWARE.
  */
 
-namespace BaksDev\Megamarket\Products\Public\Controller;
+namespace BaksDev\Megamarket\Products\Controller\Public;
 
 use BaksDev\Core\Controller\AbstractController;
 use BaksDev\Core\Repository\SettingsMain\SettingsMainInterface;
