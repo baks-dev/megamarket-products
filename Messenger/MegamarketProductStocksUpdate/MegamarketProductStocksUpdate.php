@@ -27,7 +27,7 @@ namespace BaksDev\Megamarket\Products\Messenger\MegamarketProductStocksUpdate;
 
 use BaksDev\Core\Messenger\MessageDelay;
 use BaksDev\Core\Messenger\MessageDispatchInterface;
-use BaksDev\Megamarket\Products\Api\Stocks\Update\MegamarketProductStocksUpdateRequest;
+use BaksDev\Megamarket\Products\Api\Stocks\UpdateMegamarketProductStocksRequest;
 use BaksDev\Products\Product\Repository\ProductQuantity\ProductQuantityByArticle\ProductQuantityByArticleInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
@@ -38,7 +38,7 @@ final class MegamarketProductStocksUpdate
     private LoggerInterface $logger;
 
     public function __construct(
-        private readonly MegamarketProductStocksUpdateRequest $MegamarketProductStocksUpdateRequest,
+        private readonly UpdateMegamarketProductStocksRequest $UpdateMegamarketProductStocksRequest,
         private readonly ProductQuantityByArticleInterface $productQuantityByArticle,
         private readonly MessageDispatchInterface $messageDispatch,
         LoggerInterface $megamarketProductsLogger,
@@ -63,7 +63,7 @@ final class MegamarketProductStocksUpdate
             );
         }
 
-        $update = $this->MegamarketProductStocksUpdateRequest
+        $update = $this->UpdateMegamarketProductStocksRequest
             ->profile($message->getProfile())
             ->article($message->getArticle())
             ->total($Quantity)

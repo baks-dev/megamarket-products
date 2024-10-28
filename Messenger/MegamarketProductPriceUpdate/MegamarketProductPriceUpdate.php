@@ -27,7 +27,7 @@ namespace BaksDev\Megamarket\Products\Messenger\MegamarketProductPriceUpdate;
 
 use BaksDev\Core\Messenger\MessageDelay;
 use BaksDev\Core\Messenger\MessageDispatchInterface;
-use BaksDev\Megamarket\Products\Api\Price\Update\MegamarketProductPriceUpdateRequest;
+use BaksDev\Megamarket\Products\Api\Price\UpdateMegamarketProductPriceRequest;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
@@ -37,7 +37,7 @@ final class MegamarketProductPriceUpdate
     private LoggerInterface $logger;
 
     public function __construct(
-        private readonly MegamarketProductPriceUpdateRequest $MegamarketProductPriceUpdateRequest,
+        private readonly UpdateMegamarketProductPriceRequest $UpdateMegamarketProductPriceRequest,
         private readonly MessageDispatchInterface $messageDispatch,
         LoggerInterface $megamarketProductsLogger,
     )
@@ -56,7 +56,7 @@ final class MegamarketProductPriceUpdate
             return;
         }
 
-        $update = $this->MegamarketProductPriceUpdateRequest
+        $update = $this->UpdateMegamarketProductPriceRequest
             ->profile($message->getProfile())
             ->article($message->getArticle())
             ->price(
