@@ -1,17 +1,17 @@
 <?php
 /*
  *  Copyright 2024.  Baks.dev <admin@baks.dev>
- *
+ *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
  *  in the Software without restriction, including without limitation the rights
  *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  *  copies of the Software, and to permit persons to whom the Software is furnished
  *  to do so, subject to the following conditions:
- *
+ *  
  *  The above copyright notice and this permission notice shall be included in all
  *  copies or substantial portions of the Software.
- *
+ *  
  *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  *  FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
@@ -23,20 +23,19 @@
 
 declare(strict_types=1);
 
-namespace BaksDev\Megamarket\Products\Api\Stocks\Update;
+namespace BaksDev\Megamarket\Products\Api\Price;
 
 use BaksDev\Megamarket\Api\Megamarket;
+use BaksDev\Reference\Money\Type\Money;
 use Exception;
 use InvalidArgumentException;
 use stdClass;
 
-final class MegamarketProductStocksUpdateRequest extends Megamarket
+final class UpdateMegamarketProductPriceRequest extends Megamarket
 {
-    private int $retry = 0;
-
     private ?string $article = null;
 
-    private ?int $total = null;
+    private ?int $price = null;
 
     public function article(string $article): self
     {
@@ -44,9 +43,40 @@ final class MegamarketProductStocksUpdateRequest extends Megamarket
         return $this;
     }
 
-    public function total(int $total): self
+    public function price(
+        int|float|Money $price,
+        int $width = 0,
+        int $height = 0,
+        int $length = 0
+    ): self
     {
-        $this->total = $total;
+
+        if($price instanceof Money)
+        {
+            $price = $price->getOnlyPositive();
+        }
+
+        /**
+         * Добавляем к стоимости Торговую наценку
+         */
+        if($this->getPercent())
+        {
+            $percent = $price / 100 * $this->getPercent();
+            $price += $percent;
+        }
+
+
+        /**
+         * Добавляем к стоимости Надбавку за габариты товара
+         */
+        if($this->getRate())
+        {
+            $rate = ($width + $height + $length) / 2 * 100;
+            $price += $rate;
+        }
+
+        $this->price = (int) $price;
+
         return $this;
     }
 
@@ -65,25 +95,24 @@ final class MegamarketProductStocksUpdateRequest extends Megamarket
             throw new InvalidArgumentException('Invalid Argument $article');
         }
 
-        if($this->total === null)
+        if(empty($this->price))
         {
-            throw new InvalidArgumentException('Invalid Argument $total');
+            throw new InvalidArgumentException('Invalid Argument price');
         }
-
 
         try
         {
             $response = $this->TokenHttpClient()->request(
                 'POST',
-                '/api/merchantIntegration/v1/offerService/stock/update',
+                '/api/merchantIntegration/v1/offerService/manualPrice/save',
                 ['json' => [
                     'meta' => new stdClass(),
                     'data' => [
                         'token' => $this->getToken(),
-                        'stocks' => [
+                        'prices' => [
                             [
                                 "offerId" => $this->article,
-                                "quantity" => max($this->total, 0)
+                                "price" => $this->price
                             ]
                         ]
                     ]
@@ -91,33 +120,25 @@ final class MegamarketProductStocksUpdateRequest extends Megamarket
             );
 
             $content = $response->toArray(false);
+
         }
         catch(Exception $exception)
         {
-            $this->logger->critical(sprintf('megamarket: Ошибка обновления остатков артикула %s', $this->article), [$exception->getMessage()]);
+            $this->logger->critical(
+                sprintf('megamarket: Ошибка обновления стоимости артикула %s', $this->article),
+                [$exception->getMessage()]
+            );
+
             return false;
         }
 
-
-        /** Статус всегда возвращает 200, делаем ретрай сами */
         if(isset($content['error']))
         {
-            // Если истрачено 5 попыток с задержкой в прогрессии
-            if($this->retry > 32)
-            {
-                $content['error'][0] = self::class.':'.__LINE__;
-
-                $this->logger->critical(sprintf('megamarket: Ошибка обновления остатков артикула %s', $this->article), $content['error']);
-
-                return false;
-            }
-
-            sleep($this->retry);
-
-            $this->retry *= 2;
-            $this->update();
+            $this->logger->critical(sprintf('megamarket: Ошибка обновления стоимости артикула %s', $this->article), $content['error']);
+            return false;
         }
 
         return isset($content['success']) && $content['success'] === 1;
     }
+
 }

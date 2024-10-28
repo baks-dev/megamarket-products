@@ -25,6 +25,8 @@ declare(strict_types=1);
 
 namespace BaksDev\Megamarket\Products\Messenger\MegamarketProductStocksUpdate;
 
+use BaksDev\Core\Messenger\MessageDelay;
+use BaksDev\Core\Messenger\MessageDispatchInterface;
 use BaksDev\Megamarket\Products\Api\Stocks\Update\MegamarketProductStocksUpdateRequest;
 use BaksDev\Products\Product\Repository\ProductQuantity\ProductQuantityByArticle\ProductQuantityByArticleInterface;
 use Psr\Log\LoggerInterface;
@@ -36,10 +38,12 @@ final class MegamarketProductStocksUpdate
     private LoggerInterface $logger;
 
     public function __construct(
-        private readonly MegamarketProductStocksUpdateRequest $request,
+        private readonly MegamarketProductStocksUpdateRequest $MegamarketProductStocksUpdateRequest,
         private readonly ProductQuantityByArticleInterface $productQuantityByArticle,
+        private readonly MessageDispatchInterface $messageDispatch,
         LoggerInterface $megamarketProductsLogger,
-    ) {
+    )
+    {
         $this->logger = $megamarketProductsLogger;
     }
 
@@ -59,15 +63,22 @@ final class MegamarketProductStocksUpdate
             );
         }
 
-        $update = $this->request
+        $update = $this->MegamarketProductStocksUpdateRequest
             ->profile($message->getProfile())
             ->article($message->getArticle())
             ->total($Quantity)
             ->update();
 
+
         if($update === false)
         {
+            $this->messageDispatch->dispatch(
+                message: $message,
+                stamps: [new MessageDelay('5 seconds')],
+                transport: (string) $message->getProfile()
+            );
 
+            return;
         }
 
         $this->logger->info(
