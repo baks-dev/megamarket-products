@@ -38,8 +38,8 @@ use BaksDev\Products\Product\Type\Offers\Variation\Id\ProductVariationUid;
 use BaksDev\Products\Product\Type\Offers\Variation\Modification\Id\ProductModificationUid;
 use DateInterval;
 use Psr\Log\LoggerInterface;
+use Random\Randomizer;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
-use Symfony\Component\Messenger\Stamp\DelayStamp;
 
 #[AsMessageHandler(priority: 100)]
 final class UpdateStocksMegamarketByChangeStatus
@@ -52,7 +52,8 @@ final class UpdateStocksMegamarketByChangeStatus
         private readonly AllProfileMegamarketTokenInterface $allProfileMegamarketToken,
         private readonly MessageDispatchInterface $messageDispatch,
         LoggerInterface $megamarketProductsLogger,
-    ) {
+    )
+    {
         $this->logger = $megamarketProductsLogger;
     }
 
@@ -61,6 +62,8 @@ final class UpdateStocksMegamarketByChangeStatus
      */
     public function __invoke(OrderMessage $message): void
     {
+        $this->logger->debug(self::class, [$message]);
+
         /** Получаем всю продукцию в заказе */
         $productsOrder = $this->orderProducts
             ->order($message->getId())
@@ -75,6 +78,8 @@ final class UpdateStocksMegamarketByChangeStatus
         $profiles = $this->allProfileMegamarketToken
             ->onlyActiveToken()
             ->findAll();
+
+        $Randomizer = new Randomizer();
 
         foreach($profiles as $profile)
         {
@@ -110,7 +115,8 @@ final class UpdateStocksMegamarketByChangeStatus
                         empty($itemProduct['product_parameter_height']) ||
                         empty($itemProduct['product_parameter_weight'])
 
-                    ) {
+                    )
+                    {
                         $this->logger->critical(
                             sprintf('Не указаны параметры упаковки артикула %s', $itemProduct['product_article'])
                         );
@@ -123,10 +129,12 @@ final class UpdateStocksMegamarketByChangeStatus
                         $itemProduct['product_article']
                     );
 
+                    $delay = sprintf('%s seconds', $Randomizer->getInt(5, 10));
+
                     /** Добавляем в очередь на обновление */
                     $this->messageDispatch->dispatch(
                         $MegamarketProductStocksMessage,
-                        stamps: [new MessageDelay(DateInterval::createFromDateString('3 seconds'))], // задержка 3 сек для обновления карточки
+                        stamps: [new MessageDelay(DateInterval::createFromDateString($delay))],
                         transport: (string) $profile
                     );
                 }
