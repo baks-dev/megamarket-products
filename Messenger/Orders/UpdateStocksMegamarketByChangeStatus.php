@@ -60,8 +60,6 @@ final class UpdateStocksMegamarketByChangeStatus
      */
     public function __invoke(OrderMessage $message): void
     {
-        $this->logger->debug(self::class, [$message]);
-
         /** Получаем всю продукцию в заказе */
         $productsOrder = $this->orderProducts
             ->order($message->getId())
