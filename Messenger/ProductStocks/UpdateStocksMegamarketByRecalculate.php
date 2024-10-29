@@ -31,7 +31,6 @@ use BaksDev\Megamarket\Products\Messenger\MegamarketProductStocksUpdate\Megamark
 use BaksDev\Megamarket\Products\Repository\AllProducts\MegamarketAllProductInterface;
 use BaksDev\Megamarket\Repository\AllProfileToken\AllProfileMegamarketTokenInterface;
 use BaksDev\Products\Stocks\Messenger\Products\Recalculate\RecalculateProductMessage;
-use DateInterval;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
@@ -114,7 +113,7 @@ final class UpdateStocksMegamarketByRecalculate
                 /** Добавляем в очередь на обновление */
                 $this->messageDispatch->dispatch(
                     $MegamarketProductStocksMessage,
-                    stamps: [new MessageDelay(DateInterval::createFromDateString('3 seconds'))], // задержка 3 сек для обновления карточки
+                    stamps: [new MessageDelay('5 seconds')], // задержка 3 сек для обновления карточки
                     transport: (string) $profile
                 );
             }

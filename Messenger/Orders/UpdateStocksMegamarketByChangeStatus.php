@@ -36,9 +36,7 @@ use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
 use BaksDev\Products\Product\Type\Offers\Variation\Id\ProductVariationUid;
 use BaksDev\Products\Product\Type\Offers\Variation\Modification\Id\ProductModificationUid;
-use DateInterval;
 use Psr\Log\LoggerInterface;
-use Random\Randomizer;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler(priority: 100)]
@@ -78,8 +76,6 @@ final class UpdateStocksMegamarketByChangeStatus
         $profiles = $this->allProfileMegamarketToken
             ->onlyActiveToken()
             ->findAll();
-
-        $Randomizer = new Randomizer();
 
         foreach($profiles as $profile)
         {
@@ -129,12 +125,10 @@ final class UpdateStocksMegamarketByChangeStatus
                         $itemProduct['product_article']
                     );
 
-                    $delay = sprintf('%s seconds', $Randomizer->getInt(5, 10));
-
                     /** Добавляем в очередь на обновление */
                     $this->messageDispatch->dispatch(
                         $MegamarketProductStocksMessage,
-                        stamps: [new MessageDelay(DateInterval::createFromDateString($delay))],
+                        stamps: [new MessageDelay('5 seconds')],
                         transport: (string) $profile
                     );
                 }

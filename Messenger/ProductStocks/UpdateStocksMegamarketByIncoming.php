@@ -35,7 +35,6 @@ use BaksDev\Products\Stocks\Entity\Products\ProductStockProduct;
 use BaksDev\Products\Stocks\Messenger\ProductStockMessage;
 use BaksDev\Products\Stocks\Repository\ProductStocksById\ProductStocksByIdInterface;
 use BaksDev\Products\Stocks\Type\Status\ProductStockStatus\ProductStockStatusIncoming;
-use DateInterval;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
@@ -162,7 +161,7 @@ final class UpdateStocksMegamarketByIncoming
                     /** Добавляем в очередь на обновление */
                     $this->messageDispatch->dispatch(
                         $MegamarketProductStocksMessage,
-                        stamps: [new MessageDelay(DateInterval::createFromDateString('3 seconds'))], // задержка 3 сек для обновления карточки
+                        stamps: [new MessageDelay('5 seconds')], // задержка 3 сек для обновления карточки
                         transport: (string) $profile
                     );
                 }
