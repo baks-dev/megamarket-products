@@ -32,6 +32,8 @@ use stdClass;
 
 final class UpdateMegamarketProductStocksRequest extends Megamarket
 {
+    private const bool STOP_SALES = false;
+
     private ?string $article = null;
 
     private ?int $total = null;
@@ -80,7 +82,7 @@ final class UpdateMegamarketProductStocksRequest extends Megamarket
                         'stocks' => [
                             [
                                 "offerId" => $this->article,
-                                "quantity" => max($this->total, 0)
+                                "quantity" => self::STOP_SALES === true ? 0 : max($this->total, 0)
                             ]
                         ]
                     ]
