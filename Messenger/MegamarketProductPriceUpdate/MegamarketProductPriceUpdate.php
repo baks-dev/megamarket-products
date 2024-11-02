@@ -76,6 +76,14 @@ final class MegamarketProductPriceUpdate
                 transport: (string) $message->getProfile()
             );
 
+            $this->logger->critical(
+                message: sprintf(
+                    format: 'megamarket-products: Пробуем обновить стоимость %s через 5 секунд',
+                    values: $message->getArticle()
+                ),
+                context: [self::class.':'.__LINE__]
+            );
+
             return;
         }
 
