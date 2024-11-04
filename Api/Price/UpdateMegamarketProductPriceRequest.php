@@ -135,6 +135,7 @@ final class UpdateMegamarketProductPriceRequest extends Megamarket
         if(isset($content['error']))
         {
             $this->logger->critical(sprintf('megamarket: Ошибка обновления стоимости артикула %s', $this->article), $content['error']);
+
             return false;
         }
 

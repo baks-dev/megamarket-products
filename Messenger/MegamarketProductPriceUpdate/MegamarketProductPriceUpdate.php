@@ -77,10 +77,7 @@ final class MegamarketProductPriceUpdate
             );
 
             $this->logger->critical(
-                message: sprintf(
-                    format: 'megamarket-products: Пробуем обновить стоимость %s через 5 секунд',
-                    values: $message->getArticle()
-                ),
+                message: sprintf('megamarket-products: Пробуем обновить стоимость %s через 5 секунд', $message->getArticle()),
                 context: [self::class.':'.__LINE__]
             );
 
