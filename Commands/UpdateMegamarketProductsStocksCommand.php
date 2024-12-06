@@ -25,21 +25,13 @@
 namespace BaksDev\Megamarket\Products\Commands;
 
 use BaksDev\Core\Messenger\MessageDispatchInterface;
-use BaksDev\Megamarket\Products\Messenger\MegamarketProductPriceUpdate\MegamarketProductPriceMessage;
+use BaksDev\Megamarket\Products\Messenger\MegamarketProductStocksUpdate\MegamarketProductStocksMessage;
 use BaksDev\Megamarket\Products\Repository\AllProducts\MegamarketAllProductInterface;
 use BaksDev\Megamarket\Repository\AllProfileToken\AllProfileMegamarketTokenInterface;
-use BaksDev\Reference\Currency\Type\Currency;
-use BaksDev\Reference\Money\Type\Money;
 use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
-use BaksDev\Yandex\Market\Products\Entity\Card\YaMarketProductsCard;
 use BaksDev\Yandex\Market\Products\Repository\Card\ProductsNotExistsYaMarketCard\ProductsNotExistsYaMarketCardInterface;
-use BaksDev\Yandex\Market\Products\UseCase\Cards\NewEdit\Market\YaMarketProductsCardMarketDTO;
-use BaksDev\Yandex\Market\Products\UseCase\Cards\NewEdit\YaMarketProductsCardDTO;
-use BaksDev\Yandex\Market\Products\UseCase\Cards\NewEdit\YaMarketProductsCardHandler;
-use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -50,10 +42,11 @@ use Symfony\Component\Console\Style\SymfonyStyle;
  * Получаем карточки товаров и добавляем отсутствующие
  */
 #[AsCommand(
-    name: 'baks:megamarket-products:post:price',
-    description: 'Обновляет все цены на продукцию'
+    name: 'baks:megamarket-products:update:stocks',
+    description: 'Обновляет все остатки на продукцию',
+    aliases: ['baks:megamarket:update:stocks']
 )]
-class MegamarketPostPriceCommand extends Command
+class UpdateMegamarketProductsStocksCommand extends Command
 {
     private SymfonyStyle $io;
 
@@ -61,7 +54,8 @@ class MegamarketPostPriceCommand extends Command
         private readonly MegamarketAllProductInterface $allProductPrice,
         private readonly AllProfileMegamarketTokenInterface $allProfileMegamarketToken,
         private readonly MessageDispatchInterface $messageDispatch,
-    ) {
+    )
+    {
         parent::__construct();
     }
 
@@ -126,7 +120,7 @@ class MegamarketPostPriceCommand extends Command
             }
         }
 
-        $this->io->success('Цены Megamarket успешно обновлены');
+        $this->io->success('Остатки Megamarket успешно обновлены');
 
         return Command::SUCCESS;
     }
@@ -148,46 +142,36 @@ class MegamarketPostPriceCommand extends Command
             if(empty($product['product_price']))
             {
                 $this->io->warning(
-                    sprintf('Не указана стоимость артикула %s', $product['product_article'])
+                    sprintf('Не указана стоимость продукции %s', $product['product_article'])
                 );
 
                 continue;
             }
 
-            $currency = new Currency($product['product_currency']);
 
+            /** Если не указаны параметры упаковки 0 */
             if(
                 empty($product['product_parameter_length']) ||
                 empty($product['product_parameter_width']) ||
                 empty($product['product_parameter_height']) ||
                 empty($product['product_parameter_weight'])
-            ) {
 
+            )
+            {
                 $this->io->warning(
-                    sprintf('Не указаны параметры упаковки артикула %s', $product['product_article'])
+                    sprintf('Параметры упаковки товара %s не найдены!', $product['product_article'])
                 );
 
                 continue;
             }
 
-
-            $price = new Money($product['product_price'], true);
-
-            $MegamarketProductPriceMessage = new MegamarketProductPriceMessage(
+            $MegamarketProductStocksMessage = new MegamarketProductStocksMessage(
                 $profile,
-                $product['product_article'],
-                $price,
-                $currency
+                $product['product_article']
             );
 
-            $MegamarketProductPriceMessage->setParameter(
-                $product['product_parameter_width'],
-                $product['product_parameter_height'],
-                $product['product_parameter_length']
-            );
-
-            $this->messageDispatch->dispatch($MegamarketProductPriceMessage);
-            $this->io->text(sprintf('Обновили стоимость артикула %s', $product['product_article']));
+            $this->messageDispatch->dispatch($MegamarketProductStocksMessage);
+            $this->io->text(sprintf('Обновили остаток артикула %s', $product['product_article']));
         }
     }
 }
