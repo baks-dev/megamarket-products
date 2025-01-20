@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2024.  Baks.dev <admin@baks.dev>
+ *  Copyright 2025.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -29,21 +29,17 @@ use BaksDev\Core\Messenger\MessageDelay;
 use BaksDev\Core\Messenger\MessageDispatchInterface;
 use BaksDev\Megamarket\Products\Api\Price\UpdateMegamarketProductPriceRequest;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\DependencyInjection\Attribute\Target;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
-final class MegamarketProductPriceUpdate
+final readonly class MegamarketProductPriceUpdate
 {
-    private LoggerInterface $logger;
-
     public function __construct(
-        private readonly UpdateMegamarketProductPriceRequest $UpdateMegamarketProductPriceRequest,
-        private readonly MessageDispatchInterface $messageDispatch,
-        LoggerInterface $megamarketProductsLogger,
-    )
-    {
-        $this->logger = $megamarketProductsLogger;
-    }
+        #[Target('megamarketProductsLogger')] private LoggerInterface $logger,
+        private UpdateMegamarketProductPriceRequest $UpdateMegamarketProductPriceRequest,
+        private MessageDispatchInterface $messageDispatch,
+    ) {}
 
     /**
      * Обновляем базовую цену товара на Megamarket

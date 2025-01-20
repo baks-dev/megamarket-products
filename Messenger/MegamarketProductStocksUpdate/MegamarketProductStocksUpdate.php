@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2024.  Baks.dev <admin@baks.dev>
+ *  Copyright 2025.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -30,22 +30,18 @@ use BaksDev\Core\Messenger\MessageDispatchInterface;
 use BaksDev\Megamarket\Products\Api\Stocks\UpdateMegamarketProductStocksRequest;
 use BaksDev\Products\Product\Repository\ProductQuantity\ProductQuantityByArticle\ProductQuantityByArticleInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\DependencyInjection\Attribute\Target;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler(priority: 100)]
-final class MegamarketProductStocksUpdate
+final readonly class MegamarketProductStocksUpdate
 {
-    private LoggerInterface $logger;
-
     public function __construct(
-        private readonly UpdateMegamarketProductStocksRequest $UpdateMegamarketProductStocksRequest,
-        private readonly ProductQuantityByArticleInterface $productQuantityByArticle,
-        private readonly MessageDispatchInterface $messageDispatch,
-        LoggerInterface $megamarketProductsLogger,
-    )
-    {
-        $this->logger = $megamarketProductsLogger;
-    }
+        #[Target('megamarketProductsLogger')] private LoggerInterface $logger,
+        private UpdateMegamarketProductStocksRequest $UpdateMegamarketProductStocksRequest,
+        private ProductQuantityByArticleInterface $productQuantityByArticle,
+        private MessageDispatchInterface $messageDispatch,
+    ) {}
 
     /**
      * Обновляем наличие продукции

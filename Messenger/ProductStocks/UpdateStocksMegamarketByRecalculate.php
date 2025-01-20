@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2024.  Baks.dev <admin@baks.dev>
+ *  Copyright 2025.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -32,22 +32,18 @@ use BaksDev\Megamarket\Products\Repository\AllProducts\MegamarketAllProductInter
 use BaksDev\Megamarket\Repository\AllProfileToken\AllProfileMegamarketTokenInterface;
 use BaksDev\Products\Stocks\Messenger\Products\Recalculate\RecalculateProductMessage;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\DependencyInjection\Attribute\Target;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler(priority: 0)]
-final class UpdateStocksMegamarketByRecalculate
+final readonly class UpdateStocksMegamarketByRecalculate
 {
-    private LoggerInterface $logger;
-
     public function __construct(
-        private readonly AllProfileMegamarketTokenInterface $allProfileMegamarketToken,
-        private readonly MegamarketAllProductInterface $megamarketAllProduct,
-        private readonly MessageDispatchInterface $messageDispatch,
-        LoggerInterface $megamarketProductsLogger,
-    )
-    {
-        $this->logger = $megamarketProductsLogger;
-    }
+        #[Target('megamarketProductsLogger')] private LoggerInterface $logger,
+        private AllProfileMegamarketTokenInterface $allProfileMegamarketToken,
+        private MegamarketAllProductInterface $megamarketAllProduct,
+        private MessageDispatchInterface $messageDispatch,
+    ) {}
 
     /**
      * Отправляем сообщение на обновление остатков при обновлении складского учета
