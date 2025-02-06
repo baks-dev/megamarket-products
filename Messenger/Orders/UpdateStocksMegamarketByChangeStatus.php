@@ -31,11 +31,8 @@ use BaksDev\Megamarket\Products\Messenger\MegamarketProductStocksUpdate\Megamark
 use BaksDev\Megamarket\Products\Repository\AllProducts\MegamarketAllProductInterface;
 use BaksDev\Megamarket\Repository\AllProfileToken\AllProfileMegamarketTokenInterface;
 use BaksDev\Orders\Order\Messenger\OrderMessage;
+use BaksDev\Orders\Order\Repository\OrderProducts\OrderProductRepositoryDTO;
 use BaksDev\Orders\Order\Repository\OrderProducts\OrderProductsInterface;
-use BaksDev\Products\Product\Type\Event\ProductEventUid;
-use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
-use BaksDev\Products\Product\Type\Offers\Variation\Id\ProductVariationUid;
-use BaksDev\Products\Product\Type\Offers\Variation\Modification\Id\ProductModificationUid;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Target;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
@@ -57,11 +54,11 @@ final readonly class UpdateStocksMegamarketByChangeStatus
     public function __invoke(OrderMessage $message): void
     {
         /** Получаем всю продукцию в заказе */
-        $productsOrder = $this->orderProducts
+        $products = $this->orderProducts
             ->order($message->getId())
             ->findAllProducts();
 
-        if(empty($productsOrder))
+        if(false === ($products || $products->valid()))
         {
             return;
         }
@@ -71,62 +68,72 @@ final readonly class UpdateStocksMegamarketByChangeStatus
             ->onlyActiveToken()
             ->findAll();
 
-        foreach($profiles as $profile)
+        if(false === ($profiles || $profiles->valid()))
         {
-            foreach($productsOrder as $itemOrder)
+            return;
+        }
+
+        $profiles = iterator_to_array($profiles);
+
+        /** @var OrderProductRepositoryDTO $product */
+        foreach($products as $product)
+        {
+            /** Получаем активное состояние продукта */
+            $productsProduct = $this->megamarketAllProduct
+                ->event($product->getProductEvent())
+                ->offer($product->getProductOffer())
+                ->variation($product->getProductVariation())
+                ->modification($product->getProductVariation())
+                ->findAll();
+
+            foreach($productsProduct as $itemProduct)
             {
-                /** Получаем активное состояние продукта */
-                $productsProduct = $this->megamarketAllProduct
-                    ->event(new ProductEventUid($itemOrder['product_event']))
-                    ->offer(new ProductOfferUid($itemOrder['product_offer']))
-                    ->variation(new ProductVariationUid($itemOrder['product_variation']))
-                    ->modification(new ProductModificationUid($itemOrder['product_modification']))
-                    ->findAll();
-
-                foreach($productsProduct as $itemProduct)
+                if(empty($itemProduct['product_price']))
                 {
-
-                    if(empty($itemProduct['product_price']))
-                    {
-                        $this->logger->critical(
-                            sprintf('Не указана стоимость продукции артикула %s', $itemProduct['product_article'])
-                        );
-
-                        continue;
-                    }
-
-                    /**
-                     * Если не указаны параметры упаковки - остаток 0
-                     * (на случай, если карточка с артикулом добавлена на Megamarket)
-                     */
-                    if(
-                        empty($itemProduct['product_parameter_length']) ||
-                        empty($itemProduct['product_parameter_width']) ||
-                        empty($itemProduct['product_parameter_height']) ||
-                        empty($itemProduct['product_parameter_weight'])
-
-                    )
-                    {
-                        $this->logger->critical(
-                            sprintf('Не указаны параметры упаковки артикула %s', $itemProduct['product_article'])
-                        );
-
-                        continue;
-                    }
-
-                    $MegamarketProductStocksMessage = new MegamarketProductStocksMessage(
-                        $profile,
-                        $itemProduct['product_article']
+                    $this->logger->critical(
+                        sprintf('Не указана стоимость продукции артикула %s', $itemProduct['product_article'])
                     );
 
-                    /** Добавляем в очередь на обновление */
+                    continue;
+                }
+
+                /**
+                 * Если не указаны параметры упаковки - остаток 0
+                 * (на случай, если карточка с артикулом добавлена на Megamarket)
+                 */
+                if(
+                    empty($itemProduct['product_parameter_length']) ||
+                    empty($itemProduct['product_parameter_width']) ||
+                    empty($itemProduct['product_parameter_height']) ||
+                    empty($itemProduct['product_parameter_weight'])
+
+                )
+                {
+                    $this->logger->critical(
+                        sprintf('Не указаны параметры упаковки артикула %s', $itemProduct['product_article'])
+                    );
+
+                    continue;
+                }
+
+                /**
+                 * Добавляем в очередь на обновление
+                 */
+                foreach($profiles as $profile)
+                {
+                    $MegamarketProductStocksMessage = new MegamarketProductStocksMessage(
+                        profile: $profile,
+                        article: $itemProduct['product_article']
+                    );
+
                     $this->messageDispatch->dispatch(
-                        $MegamarketProductStocksMessage,
+                        message: $MegamarketProductStocksMessage,
                         stamps: [new MessageDelay('5 seconds')],
                         transport: (string) $profile
                     );
                 }
             }
         }
+
     }
 }
