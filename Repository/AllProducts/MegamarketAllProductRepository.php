@@ -57,27 +57,27 @@ final class MegamarketAllProductRepository implements MegamarketAllProductInterf
     /**
      * ID продукта
      */
-    private ?ProductUid $product = null;
+    private ProductUid|false $product = false;
 
     /**
      * ID события
      */
-    private ?ProductEventUid $event = null;
+    private ProductEventUid|false $event = false;
 
     /**
      * Постоянный уникальный идентификатор ТП
      */
-    private ProductOfferUid|ProductOfferConst|null $offer = null;
+    private ProductOfferUid|ProductOfferConst|false $offer = false;
 
     /**
      * Постоянный уникальный идентификатор варианта
      */
-    private ProductVariationUid|ProductVariationConst|null $variation = null;
+    private ProductVariationUid|ProductVariationConst|false $variation = false;
 
     /**
      * Постоянный уникальный идентификатор модификации
      */
-    private ProductModificationUid|ProductModificationConst|null $modification = null;
+    private ProductModificationUid|ProductModificationConst|false $modification = false;
 
 
     public function product(ProductUid|string $product): self
@@ -88,6 +88,7 @@ final class MegamarketAllProductRepository implements MegamarketAllProductInterf
         }
 
         $this->product = $product;
+
         return $this;
     }
 
@@ -103,10 +104,11 @@ final class MegamarketAllProductRepository implements MegamarketAllProductInterf
         return $this;
     }
 
-    public function offer(ProductOfferUid|ProductOfferConst|string|null $offer): self
+    public function offer(ProductOfferUid|ProductOfferConst|string|null|false $offer): self
     {
-        if(!$offer)
+        if(empty($offer))
         {
+            $this->offer = false;
             return $this;
         }
 
@@ -119,10 +121,11 @@ final class MegamarketAllProductRepository implements MegamarketAllProductInterf
         return $this;
     }
 
-    public function variation(ProductVariationUid|ProductVariationConst|string|null $variation): self
+    public function variation(ProductVariationUid|ProductVariationConst|string|null|false $variation): self
     {
-        if(!$variation)
+        if(empty($variation))
         {
+            $this->variation = false;
             return $this;
         }
 
@@ -135,10 +138,11 @@ final class MegamarketAllProductRepository implements MegamarketAllProductInterf
         return $this;
     }
 
-    public function modification(ProductModificationUid|ProductModificationConst|string|null $modification): self
+    public function modification(ProductModificationUid|ProductModificationConst|string|null|false $modification): self
     {
-        if(!$modification)
+        if(empty($modification))
         {
+            $this->modification = false;
             return $this;
         }
 
@@ -148,6 +152,7 @@ final class MegamarketAllProductRepository implements MegamarketAllProductInterf
         }
 
         $this->modification = $modification;
+
         return $this;
     }
 
@@ -177,22 +182,21 @@ final class MegamarketAllProductRepository implements MegamarketAllProductInterf
     {
         $dbal = $this->DBALQueryBuilder->createQueryBuilder(self::class);
 
-
         if($this->product)
         {
             $dbal
                 ->andWhere('product.id = :product')
                 ->setParameter('product', $this->product, ProductUid::TYPE);
 
-            $this->event = null;
+            $this->event = false;
         }
 
-        if($this->event === null)
+        if($this->event === false)
         {
             $dbal->from(Product::class, 'product');
         }
 
-        if($this->event)
+        if($this->event instanceof ProductEventUid)
         {
             $dbal
                 ->from(ProductEvent::class, 'product_event')
@@ -228,7 +232,7 @@ final class MegamarketAllProductRepository implements MegamarketAllProductInterf
          * Торговое предложение
          */
 
-        if($this->offer === null)
+        if($this->offer === false)
         {
             $dbal->leftJoin(
                 'product',
@@ -285,7 +289,7 @@ final class MegamarketAllProductRepository implements MegamarketAllProductInterf
          * Множественный вариант торгового предложения
          */
 
-        if($this->variation === null)
+        if($this->variation === false)
         {
             $dbal->leftJoin(
                 'product_offer',
@@ -343,7 +347,7 @@ final class MegamarketAllProductRepository implements MegamarketAllProductInterf
          * Модификация множественного варианта торгового предложения
          */
 
-        if($this->modification === null)
+        if($this->modification === false)
         {
             $dbal->leftJoin(
                 'product_variation',

@@ -83,7 +83,7 @@ final readonly class UpdateStocksMegamarketByChangeStatus
                 ->event($product->getProductEvent())
                 ->offer($product->getProductOffer())
                 ->variation($product->getProductVariation())
-                ->modification($product->getProductVariation())
+                ->modification($product->getProductModification())
                 ->findAll();
 
             foreach($productsProduct as $itemProduct)
