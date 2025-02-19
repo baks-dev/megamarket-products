@@ -36,7 +36,11 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Target;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
-#[AsMessageHandler]
+/**
+ * Обновляем стоимость Megamarket при изменении системной карточки
+ * @note Карточка обновляется посредством вызова feed.xml
+ */
+#[AsMessageHandler(priority: 10)]
 final readonly class UpdatePriceMegamarketByChangeProduct
 {
     public function __construct(
@@ -46,9 +50,6 @@ final readonly class UpdatePriceMegamarketByChangeProduct
         private MessageDispatchInterface $messageDispatch,
     ) {}
 
-    /**
-     * Обновляем стоимость Megamarket при изменении системной карточки
-     */
     public function __invoke(ProductMessage $message): void
     {
         /** Получаем активное состояние продукта */
