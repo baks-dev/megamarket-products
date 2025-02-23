@@ -31,7 +31,7 @@ use BaksDev\Megamarket\Products\Messenger\MegamarketProductStocksUpdate\Megamark
 use BaksDev\Megamarket\Products\Repository\AllProducts\MegamarketAllProductInterface;
 use BaksDev\Megamarket\Repository\AllProfileToken\AllProfileMegamarketTokenInterface;
 use BaksDev\Orders\Order\Messenger\OrderMessage;
-use BaksDev\Orders\Order\Repository\OrderProducts\OrderProductRepositoryDTO;
+use BaksDev\Orders\Order\Repository\OrderProducts\OrderProductResultDTO;
 use BaksDev\Orders\Order\Repository\OrderProducts\OrderProductsInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Target;
@@ -75,7 +75,7 @@ final readonly class UpdateStocksMegamarketWhenChangeOrderStatusDispatcher
 
         $profiles = iterator_to_array($profiles);
 
-        /** @var OrderProductRepositoryDTO $product */
+        /** @var OrderProductResultDTO $product */
         foreach($products as $product)
         {
             /** Получаем активное состояние продукта */
