@@ -33,7 +33,7 @@ use BaksDev\Megamarket\Repository\AllProfileToken\AllProfileMegamarketTokenInter
 use BaksDev\Products\Stocks\Entity\Stock\Event\ProductStockEvent;
 use BaksDev\Products\Stocks\Entity\Stock\Products\ProductStockProduct;
 use BaksDev\Products\Stocks\Messenger\ProductStockMessage;
-use BaksDev\Products\Stocks\Repository\ProductStocksById\ProductStocksByIdInterface;
+use BaksDev\Products\Stocks\Repository\ProductStocksEvent\ProductStocksEventInterface;
 use BaksDev\Products\Stocks\Type\Status\ProductStockStatus\ProductStockStatusIncoming;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
@@ -48,25 +48,21 @@ final readonly class UpdateStocksMegamarketByIncoming
 {
     public function __construct(
         #[Target('megamarketProductsLogger')] private LoggerInterface $logger,
-        private ProductStocksByIdInterface $productStocks,
-        private EntityManagerInterface $entityManager,
         private MessageDispatchInterface $messageDispatch,
         private MegamarketAllProductInterface $megamarketAllProduct,
         private AllProfileMegamarketTokenInterface $allProfileMegamarketToken,
+        private ProductStocksEventInterface $ProductStocksEventRepository,
     ) {}
 
 
     public function __invoke(ProductStockMessage $message): void
     {
 
-        /** Получаем статус заявки */
-        $ProductStockEvent = $this->entityManager
-            ->getRepository(ProductStockEvent::class)
-            ->find($message->getEvent());
+        $ProductStockEvent = $this->ProductStocksEventRepository
+            ->forEvent($message->getEvent())
+            ->find();
 
-        $this->entityManager->clear();
-
-        if(!$ProductStockEvent)
+        if(false === ($ProductStockEvent instanceof ProductStockEvent))
         {
             return;
         }
@@ -74,16 +70,17 @@ final readonly class UpdateStocksMegamarketByIncoming
         /**
          * Если Статус заявки не является Incoming «Приход на склад»
          */
-        if(false === $ProductStockEvent->getStatus()->equals(ProductStockStatusIncoming::class))
+        if(false === $ProductStockEvent->equalsProductStockStatus(ProductStockStatusIncoming::class))
         {
             return;
         }
 
         // Получаем всю продукцию в ордере со статусом Incoming
-        $productsStocks = $this->productStocks->getProductsIncomingStocks($message->getId());
+        $products = $ProductStockEvent->getProduct();
 
-        if(empty($productsStocks))
+        if($products->isEmpty())
         {
+            $this->logger->warning('Заявка не имеет продукции в коллекции', [self::class.':'.__LINE__]);
             return;
         }
 
@@ -95,7 +92,7 @@ final readonly class UpdateStocksMegamarketByIncoming
         foreach($profiles as $profile)
         {
             /** @var ProductStockProduct $itemStocks */
-            foreach($productsStocks as $itemStocks)
+            foreach($products as $itemStocks)
             {
                 /** Получаем активное состояние продукта */
                 $productsProduct = $this->megamarketAllProduct
