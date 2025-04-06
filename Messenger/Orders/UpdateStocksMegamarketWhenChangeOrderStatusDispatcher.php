@@ -58,7 +58,7 @@ final readonly class UpdateStocksMegamarketWhenChangeOrderStatusDispatcher
             ->order($message->getId())
             ->findAllProducts();
 
-        if(false === ($products || $products->valid()))
+        if(false === $products || false === $products->valid())
         {
             return;
         }
@@ -68,7 +68,7 @@ final readonly class UpdateStocksMegamarketWhenChangeOrderStatusDispatcher
             ->onlyActiveToken()
             ->findAll();
 
-        if(false === ($profiles || $profiles->valid()))
+        if(false === $profiles->valid())
         {
             return;
         }
