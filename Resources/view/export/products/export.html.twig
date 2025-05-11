@@ -45,7 +45,7 @@
 
                 <offer id='{{ card.product_article }}' available='{{ card.product_quantity > 0 ? 'true' : 'false' }}'>
 
-                    <url>{{ absolute_url(path('products-product:user.detail', {
+                    <url>{{ absolute_url(path('products-product:public.detail', {
                             category: card.category_url,
                             url: card.url,
                             offer: card.offer_value ?: null,
