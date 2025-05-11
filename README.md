@@ -1,6 +1,6 @@
 # BaksDev Products Megamarket
 
-[![Version](https://img.shields.io/badge/version-7.2.12-blue)](https://github.com/baks-dev/megamarket-products/releases)
+[![Version](https://img.shields.io/badge/version-7.2.13-blue)](https://github.com/baks-dev/megamarket-products/releases)
 ![php 8.4+](https://img.shields.io/badge/php-min%208.4-red.svg)
 [![packagist](https://img.shields.io/badge/packagist-green)](https://packagist.org/packages/baks-dev/megamarket-products)
 
