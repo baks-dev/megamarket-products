@@ -4,7 +4,7 @@
     <shop>
         <name>{{ settings.title is defined ? settings.title : 'Company name' }}</name>
         <company>{{ settings.description is defined ? settings.description : 'Добро пожаловать' }}</company>
-        <url>{{ absolute_url(path('core:user.homepage')) }}</url>
+        <url>{{ absolute_url(path('core:public.homepage')) }}</url>
         <platform>Symfony</platform>
 
         {% set categoryArray = {} %}
