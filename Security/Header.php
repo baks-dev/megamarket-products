@@ -49,6 +49,14 @@ final class Header implements MenuAdminInterface
     }
 
     /**
+     * Метод возвращает ключ раздела (для меню телеграм)
+     */
+    public function getPathKey(): false
+    {
+        return false;
+    }
+
+    /**
      * Метод возвращает секцию, в которую помещается ссылка на раздел
      */
     public function getGroupMenu(): MenuAdminSectionGroupCollectionInterface|bool
