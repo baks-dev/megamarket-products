@@ -26,6 +26,7 @@ declare(strict_types=1);
 namespace BaksDev\Megamarket\Products\Api\Stocks;
 
 use BaksDev\Megamarket\Api\Megamarket;
+use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 use Exception;
 use InvalidArgumentException;
 use stdClass;
@@ -52,9 +53,10 @@ final class UpdateMegamarketProductStocksRequest extends Megamarket
 
     public function update(): bool
     {
-        if($this->isExecuteEnvironment() === false)
+        if(false === ($this->getProfile() instanceof UserProfileUid) || $this->isExecuteEnvironment() === false)
         {
-            $this->logger->critical('Запрос может быть выполнен только в PROD окружении', [self::class.':'.__LINE__]);
+            $this->logger->critical('Запрос может быть выполнен только для активного UserProfileUid и PROD окружении', [self::class.':'.__LINE__]);
+
             return true;
         }
 

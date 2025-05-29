@@ -49,7 +49,8 @@ final readonly class MegamarketProductStocksUpdate
     public function __invoke(MegamarketProductStocksMessage $message): void
     {
         /** Получаем доступное наличие по артикулу */
-        $Quantity = $this->productQuantityByArticle->find($message->getArticle()) ?: 0;
+        $Quantity = $this->productQuantityByArticle
+            ->find($message->getArticle()) ?: 0;
 
         if($Quantity === false)
         {
