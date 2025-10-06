@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding='UTF-8'?>
 
 <yml_catalog date='{{ 'now'|date('Y-m-d\\TH:00:00P') }}'>
+
+
     <shop>
         <name>{{ settings.title is defined ? settings.title : 'Company name' }}</name>
         <company>{{ settings.description is defined ? settings.description : 'Добро пожаловать' }}</company>
@@ -36,40 +38,41 @@
             <option cost="200" days="1"/>
         </pickup-options> #}
 
+        {# @var card \BaksDev\Products\Product\Repository\AllProductsByCategory\AllProductsByCategoryResult #}
+
         <offers>
             {% for card in products|filter(v => v.product_price > 0) %}
 
 
+                {% set arr_property = card.getCategorySectionField %}
 
-                {% set arr_property = card.category_section_field|json_decode %}
-
-                <offer id='{{ card.product_article }}' available='{{ card.product_quantity > 0 ? 'true' : 'false' }}'>
+                <offer id='{{ card.productArticle }}' available='{{ card.productQuantity > 0 ? 'true' : 'false' }}'>
 
                     <url>{{ absolute_url(path('products-product:public.detail', {
-                            category: card.category_url,
-                            url: card.url,
-                            offer: card.offer_value ?: null,
-                            variation: card.variation_value ?: null,
-                            modification: card.modification_value ?: null,
-                            postfix:  (card.modification_postfix ?: card.variation_postfix ?: card.offer_postfix ?: null )|replace({ '/': '-' })
+                            category: card.categoryUrl,
+                            url: card.productUrl,
+                            offer: card.offerValue,
+                            variation: card.variationValue,
+                            modification: card.modificationValue,
+                            postfix:  (card.modificationPostfix ?: card.variationPostfix ?: card.offerPostfix ?: null )|replace({ '/': '-' })
                         } )) }}</url>
 
-                    <name>{{ card.product_name }}
+                    <name>{{ card.productName }}
                         {# Значение множественного варианта ТП #}
-                        {{ card.variation_value|call_twig_func(card.variation_reference~'_template') ~ card.modification_value|call_twig_func(card.modification_reference~'_template') }}
+                        {{ card.variationValue|call_twig_func(card.variationReference~'_template') ~ card.modificationValue|call_twig_func(card.modificationReference~'_template') }}
                         {# Значение торгового предложения #}
-                        {{ card.offer_value|call_twig_func(card.offer_reference~'_template') }}
+                        {{ card.offerValue|call_twig_func(card.offerReference~'_template') }}
                         {# Постфикс торгового предложения #}
-                        {{ card.offer_postfix }}
+                        {{ card.offerPostfix }}
                         {# Постфикс множественного варианта #}
-                        {{ card.variation_postfix }}
+                        {{ card.variationPostfix }}
                         {# Постфикс модификации #}
-                        {{ card.modification_postfix }}</name>
+                        {{ card.modificationPostfix }}</name>
 
                     {# Бренд #}
-                    <vendor>{{ card.category_name }}</vendor>
-                    <vendorCode>{{ card.product_article }}</vendorCode>
-                    <model>{{ card.product_name }}</model>
+                    <vendor>{{ card.categoryName }}</vendor>
+                    <vendorCode>{{ card.productArticle }}</vendorCode>
+                    <model>{{ card.productName }}</model>
 
 
                     {# НАЛИЧИЕ #}
@@ -78,28 +81,22 @@
                     </shipment-options> #}
 
 
-                    {% set commission = card.product_price / 100 * percent %}
+                    {% set commission = card.productPrice.applyString(percent) %}
+
                     {# длина + ширина + высота * 5 и переводлим в с копейками * 100 #}
-                    {% set rate = (card.product_parameter_length + card.product_parameter_width + card.product_parameter_height) * 5 * 100 %}
-                    {% set result_price = card.product_price + commission + rate %}
+                    {% set rate = (card.productLength + card.productWidth + card.productHeight) * 5 * 100 %}
+                    {% set result_price = card.productPrice.roundValue + commission + rate %}
 
                     <price>{{ (result_price / 100) ?: 'по запросу' }}</price>
-                    <currencyId>{{ card.product_currency|upper }}</currencyId>
+                    <currencyId>{{ card.productCurrency|upper }}</currencyId>
                     {# <oldprice>9990</oldprice> #}
                     {# <enable_auto_discounts>true</enable_auto_discounts> #}
 
 
-                    <categoryId>{{ categoryArray[card.category] }}</categoryId>
+                    <categoryId>{{ categoryArray[card.categoryId] }}</categoryId>
 
                     {# Обложка  #}
-                    {% set image_path = '/assets/{{ version }}/img/empty.png' %}
-
-                    {% if card.product_image_ext is defined and card.product_image_ext is not null %}
-                        {% set img_host =  card.product_image_cdn == true  ? CDN_HOST : '' %}
-                        {% set img_dir = card.product_image %}
-                        {% set img_file = (img_host is empty ? '/image.' : '/original.') ~ card.product_image_ext %}
-                        {% set image_path = img_host ~ img_dir ~ img_file %}
-                    {% endif %}
+                    {% set image_path = cdn_image_path(card.productImage, card.productImageExt, card.productImageCdn, 'large') %}
 
                     <picture>{{ absolute_url(image_path) }}</picture>
 
@@ -109,10 +106,10 @@
                         ]]>
                     </description>
 
-                    <barcode>{{ barcode(card.product_article ) }}</barcode>
+                    <barcode>{{ barcode(card.productArticle ) }}</barcode>
 
                     <outlets>
-                        <outlet id='153373' instock='{{ card.product_quantity }}'/>
+                        <outlet id='153373' instock='{{ card.productQuantity }}'/>
                     </outlets>
 
 
@@ -125,16 +122,16 @@
                         {% endif %}
                     {% endfor %}
 
-                    {% if card.product_parameter_weight is defined and card.product_parameter_weight is not empty %}
+                    {% if card.productWeight is not empty %}
 
                         {# параметры #}
-                        <param name='Weight'>{{ card.product_parameter_weight / 100 }}</param> {# Масса #}
-                        <param name='Width'>{{ card.product_parameter_width / 10 }}</param> {# Ширина #}
-                        <param name='Length'>{{ card.product_parameter_length / 10 }}</param> {# Длина #}
-                        <param name='Height'>{{ card.product_parameter_height / 10 }}</param> {# Высота #}
+                        <param name='Weight'>{{ card.productWeight }}</param> {# Масса #}
+                        <param name='Width'>{{ card.productWidth }}</param> {# Ширина #}
+                        <param name='Length'>{{ card.productLength }}</param> {# Длина #}
+                        <param name='Height'>{{ card.productHeight }}</param> {# Высота #}
 
                         {# Длина, ширина, высота в упаковке в сантиметрах. (20.1/20.551/22.5) #}
-                        <param name='Габариты'>{{ card.product_parameter_width / 10 }} x {{ card.product_parameter_length / 10 }} x {{ card.product_parameter_height / 10 }}</param>
+                        <param name='Габариты'>{{ card.productWidth / 10 }} x {{ card.productLength / 10 }} x {{ card.productHeight / 10 }}</param>
 
                     {% endif %}
 
