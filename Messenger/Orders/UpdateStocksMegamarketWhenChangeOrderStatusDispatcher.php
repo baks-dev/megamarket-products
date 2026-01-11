@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2025.  Baks.dev <admin@baks.dev>
+ *  Copyright 2026.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -34,6 +34,7 @@ use BaksDev\Orders\Order\Messenger\OrderMessage;
 use BaksDev\Orders\Order\Repository\OrderProducts\OrderProductResultDTO;
 use BaksDev\Orders\Order\Repository\OrderProducts\OrderProductsInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\DependencyInjection\Attribute\Target;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
@@ -49,6 +50,7 @@ final readonly class UpdateStocksMegamarketWhenChangeOrderStatusDispatcher
         private MegamarketAllProductInterface $megamarketAllProduct,
         private AllProfileMegamarketTokenInterface $allProfileMegamarketToken,
         private MessageDispatchInterface $messageDispatch,
+        #[Autowire(env: 'PROJECT_PROFILE')] private ?string $PROJECT_PROFILE = null,
     ) {}
 
     public function __invoke(OrderMessage $message): void
@@ -119,17 +121,23 @@ final readonly class UpdateStocksMegamarketWhenChangeOrderStatusDispatcher
                 /**
                  * Добавляем в очередь на обновление
                  */
-                foreach($profiles as $profile)
+                foreach($profiles as $UserProfileUid)
                 {
+                    /** Если указан профиль проекта - пропускаем остальные профили */
+                    if(false === empty($this->PROJECT_PROFILE) && false === $UserProfileUid->equals($this->PROJECT_PROFILE))
+                    {
+                        continue;
+                    }
+
                     $MegamarketProductStocksMessage = new MegamarketProductStocksMessage(
-                        profile: $profile,
+                        profile: $UserProfileUid,
                         article: $itemProduct['product_article']
                     );
 
                     $this->messageDispatch->dispatch(
                         message: $MegamarketProductStocksMessage,
                         stamps: [new MessageDelay('5 seconds')],
-                        transport: (string) $profile
+                        transport: (string) $UserProfileUid,
                     );
                 }
             }
