@@ -112,11 +112,11 @@ final class UpdateMegamarketProductPriceRequest extends Megamarket
                         'prices' => [
                             [
                                 "offerId" => $this->article,
-                                "price" => $this->price
-                            ]
-                        ]
-                    ]
-                ]]
+                                "price" => $this->price,
+                            ],
+                        ],
+                    ],
+                ]],
             );
 
             $content = $response->toArray(false);
@@ -126,7 +126,7 @@ final class UpdateMegamarketProductPriceRequest extends Megamarket
         {
             $this->logger->critical(
                 sprintf('megamarket: Ошибка обновления стоимости артикула %s', $this->article),
-                [$exception->getMessage()]
+                [$exception->getMessage()],
             );
 
             return false;

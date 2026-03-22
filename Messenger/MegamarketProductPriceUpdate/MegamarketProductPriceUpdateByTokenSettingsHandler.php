@@ -94,18 +94,18 @@ final readonly class MegamarketProductPriceUpdateByTokenSettingsHandler
                     $profile,
                     $product['product_article'],
                     $price,
-                    $currency
+                    $currency,
                 );
 
                 $MegamarketProductPriceMessage->setParameter(
                     $product['product_parameter_width'],
                     $product['product_parameter_height'],
-                    $product['product_parameter_length']
+                    $product['product_parameter_length'],
                 );
 
                 $this->messageDispatch->dispatch(
                     message: $MegamarketProductPriceMessage,
-                    transport: 'megamarket-products'
+                    transport: 'megamarket-products',
                 );
             }
         }

@@ -70,7 +70,7 @@ final class ProductsController extends AbstractController
                 'percent' => $MegamarketAuthorization->getPercent(),
             ],
 
-            file: 'export.html.twig'
+            file: 'export.html.twig',
         );
 
         $response->headers->set('Content-Type', 'text/xml');

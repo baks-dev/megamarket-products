@@ -87,7 +87,7 @@ class UpdateMegamarketProductsStocksCommand extends Command
         $question = new ChoiceQuestion(
             'Профиль пользователя',
             $questions,
-            0
+            0,
         );
 
         $profileName = $helper->ask($input, $output, $question);
@@ -142,7 +142,7 @@ class UpdateMegamarketProductsStocksCommand extends Command
             if(empty($product['product_price']))
             {
                 $this->io->warning(
-                    sprintf('Не указана стоимость продукции %s', $product['product_article'])
+                    sprintf('Не указана стоимость продукции %s', $product['product_article']),
                 );
 
                 continue;
@@ -159,7 +159,7 @@ class UpdateMegamarketProductsStocksCommand extends Command
             )
             {
                 $this->io->warning(
-                    sprintf('Параметры упаковки товара %s не найдены!', $product['product_article'])
+                    sprintf('Параметры упаковки товара %s не найдены!', $product['product_article']),
                 );
 
                 continue;
@@ -167,7 +167,7 @@ class UpdateMegamarketProductsStocksCommand extends Command
 
             $MegamarketProductStocksMessage = new MegamarketProductStocksMessage(
                 $profile,
-                $product['product_article']
+                $product['product_article'],
             );
 
             $this->messageDispatch->dispatch($MegamarketProductStocksMessage);

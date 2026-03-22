@@ -26,11 +26,11 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 use BaksDev\Megamarket\Products\BaksDevMegamarketProductsBundle;
 use Symfony\Config\TwigConfig;
 
-return static function (TwigConfig $twig) {
+return static function(TwigConfig $twig) {
 
     $twig->path(
         BaksDevMegamarketProductsBundle::PATH.implode(DIRECTORY_SEPARATOR, ['Resources', 'view', '']), // .'Resources/view',
-        'megamarket-products'
+        'megamarket-products',
     );
 
 };

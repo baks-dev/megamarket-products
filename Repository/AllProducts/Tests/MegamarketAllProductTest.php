@@ -60,7 +60,6 @@ class MegamarketAllProductTest extends KernelTestCase
         $products = $MegamarketAllProductInterface->findAll();
 
 
-
         self::assertCount(1, $products);
 
 

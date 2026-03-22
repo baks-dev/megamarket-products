@@ -52,33 +52,28 @@ use BaksDev\Products\Product\Type\Offers\Variation\Modification\Id\ProductModifi
 
 final class MegamarketAllProductRepository implements MegamarketAllProductInterface
 {
-    public function __construct(private readonly DBALQueryBuilder $DBALQueryBuilder) {}
-
     /**
      * ID продукта
      */
     private ProductUid|false $product = false;
-
     /**
      * ID события
      */
     private ProductEventUid|false $event = false;
-
     /**
      * Постоянный уникальный идентификатор ТП
      */
     private ProductOfferUid|ProductOfferConst|false $offer = false;
-
     /**
      * Постоянный уникальный идентификатор варианта
      */
     private ProductVariationUid|ProductVariationConst|false $variation = false;
-
     /**
      * Постоянный уникальный идентификатор модификации
      */
     private ProductModificationUid|ProductModificationConst|false $modification = false;
 
+    public function __construct(private readonly DBALQueryBuilder $DBALQueryBuilder) {}
 
     public function product(ProductUid|string $product): self
     {
@@ -207,7 +202,7 @@ final class MegamarketAllProductRepository implements MegamarketAllProductInterf
                 'product_event',
                 Product::class,
                 'product',
-                'product.id = product_event.main'
+                'product.id = product_event.main',
             );
         }
 
@@ -216,7 +211,7 @@ final class MegamarketAllProductRepository implements MegamarketAllProductInterf
                 'product',
                 ProductActive::class,
                 'product_active',
-                'product_active.event = product.event'
+                'product_active.event = product.event',
             );
 
         $dbal
@@ -224,7 +219,7 @@ final class MegamarketAllProductRepository implements MegamarketAllProductInterf
                 'product',
                 ProductInfo::class,
                 'product_info',
-                'product_info.product = product.id'
+                'product_info.product = product.id',
             );
 
 
@@ -238,7 +233,7 @@ final class MegamarketAllProductRepository implements MegamarketAllProductInterf
                 'product',
                 ProductOffer::class,
                 'product_offer',
-                'product_offer.event = product.event'
+                'product_offer.event = product.event',
             );
         }
 
@@ -249,12 +244,12 @@ final class MegamarketAllProductRepository implements MegamarketAllProductInterf
                     'product',
                     ProductOffer::class,
                     'product_offer',
-                    'product_offer.event = product.event AND product_offer.const = :offer'
+                    'product_offer.event = product.event AND product_offer.const = :offer',
                 )
                 ->setParameter(
                     'offer',
                     $this->offer,
-                    ProductOfferConst::TYPE
+                    ProductOfferConst::TYPE,
                 );
         }
 
@@ -266,12 +261,12 @@ final class MegamarketAllProductRepository implements MegamarketAllProductInterf
                     'product',
                     ProductOffer::class,
                     'product_offer_tmp',
-                    'product_offer_tmp.id = :offer'
+                    'product_offer_tmp.id = :offer',
                 )
                 ->setParameter(
                     'offer',
                     $this->offer,
-                    ProductOfferUid::TYPE
+                    ProductOfferUid::TYPE,
                 );
 
 
@@ -280,7 +275,7 @@ final class MegamarketAllProductRepository implements MegamarketAllProductInterf
                     'product_offer_tmp',
                     ProductOffer::class,
                     'product_offer',
-                    'product_offer.event = product.event AND product_offer.const = product_offer_tmp.const'
+                    'product_offer.event = product.event AND product_offer.const = product_offer_tmp.const',
                 );
         }
 
@@ -295,7 +290,7 @@ final class MegamarketAllProductRepository implements MegamarketAllProductInterf
                 'product_offer',
                 ProductVariation::class,
                 'product_variation',
-                'product_variation.offer = product_offer.id'
+                'product_variation.offer = product_offer.id',
             );
         }
 
@@ -307,12 +302,12 @@ final class MegamarketAllProductRepository implements MegamarketAllProductInterf
                     'product_offer',
                     ProductVariation::class,
                     'product_variation',
-                    'product_variation.offer = product_offer.id AND product_variation.const = :variation'
+                    'product_variation.offer = product_offer.id AND product_variation.const = :variation',
                 )
                 ->setParameter(
                     'variation',
                     $this->variation,
-                    ProductVariationConst::TYPE
+                    ProductVariationConst::TYPE,
                 );
         }
 
@@ -325,12 +320,12 @@ final class MegamarketAllProductRepository implements MegamarketAllProductInterf
                     'product_offer',
                     ProductVariation::class,
                     'product_variation_temp',
-                    'product_variation_temp.id = :variation'
+                    'product_variation_temp.id = :variation',
                 )
                 ->setParameter(
                     'variation',
                     $this->variation,
-                    ProductVariationUid::TYPE
+                    ProductVariationUid::TYPE,
                 );
 
             $dbal
@@ -338,7 +333,7 @@ final class MegamarketAllProductRepository implements MegamarketAllProductInterf
                     'product_offer',
                     ProductVariation::class,
                     'product_variation',
-                    'product_variation.offer = product_offer.id AND product_variation.const = product_variation_temp.const'
+                    'product_variation.offer = product_offer.id AND product_variation.const = product_variation_temp.const',
                 );
         }
 
@@ -353,7 +348,7 @@ final class MegamarketAllProductRepository implements MegamarketAllProductInterf
                 'product_variation',
                 ProductModification::class,
                 'product_modification',
-                'product_modification.variation = product_variation.id'
+                'product_modification.variation = product_variation.id',
             );
         }
 
@@ -365,12 +360,12 @@ final class MegamarketAllProductRepository implements MegamarketAllProductInterf
                     'product_variation',
                     ProductModification::class,
                     'product_modification',
-                    'product_modification.variation = product_variation.id AND product_modification.const = :modification'
+                    'product_modification.variation = product_variation.id AND product_modification.const = :modification',
                 )
                 ->setParameter(
                     'modification',
                     $this->modification,
-                    ProductModificationConst::TYPE
+                    ProductModificationConst::TYPE,
                 );
 
         }
@@ -383,12 +378,12 @@ final class MegamarketAllProductRepository implements MegamarketAllProductInterf
                     'product_variation',
                     ProductModification::class,
                     'product_modification_tmp',
-                    'product_modification_tmp.id = :modification'
+                    'product_modification_tmp.id = :modification',
                 )
                 ->setParameter(
                     'modification',
                     $this->modification,
-                    ProductModificationUid::TYPE
+                    ProductModificationUid::TYPE,
                 );
 
 
@@ -397,7 +392,7 @@ final class MegamarketAllProductRepository implements MegamarketAllProductInterf
                     'product_variation',
                     ProductModification::class,
                     'product_modification',
-                    'product_modification.variation = product_variation.id AND product_modification.const = product_modification_tmp.const'
+                    'product_modification.variation = product_variation.id AND product_modification.const = product_modification_tmp.const',
                 );
 
         }
@@ -412,7 +407,7 @@ final class MegamarketAllProductRepository implements MegamarketAllProductInterf
                 'product',
                 ProductPrice::class,
                 'product_price',
-                'product_price.event = product.event'
+                'product_price.event = product.event',
             );
 
         $dbal
@@ -420,14 +415,14 @@ final class MegamarketAllProductRepository implements MegamarketAllProductInterf
                 'product_offer',
                 ProductOfferPrice::class,
                 'product_offer_price',
-                'product_offer_price.offer = product_offer.id'
+                'product_offer_price.offer = product_offer.id',
             );
 
         $dbal->leftJoin(
             'product_variation',
             ProductVariationPrice::class,
             'product_variation_price',
-            'product_variation_price.variation = product_variation.id'
+            'product_variation_price.variation = product_variation.id',
         );
 
 
@@ -436,7 +431,7 @@ final class MegamarketAllProductRepository implements MegamarketAllProductInterf
             'product_modification',
             ProductModificationPrice::class,
             'product_modification_price',
-            'product_modification_price.modification = product_modification.id'
+            'product_modification_price.modification = product_modification.id',
         );
 
         $dbal->addSelect(
@@ -489,7 +484,7 @@ final class MegamarketAllProductRepository implements MegamarketAllProductInterf
 			   ELSE NULL
 			   
 			END AS product_currency
-		"
+		",
         );
 
 
@@ -501,7 +496,7 @@ final class MegamarketAllProductRepository implements MegamarketAllProductInterf
                 'product_variation',
                 ProductVariationQuantity::class,
                 'product_variation_quantity',
-                'product_variation_quantity.variation = product_variation.id'
+                'product_variation_quantity.variation = product_variation.id',
             );
 
 
@@ -511,7 +506,7 @@ final class MegamarketAllProductRepository implements MegamarketAllProductInterf
                 'product_offer',
                 ProductOfferQuantity::class,
                 'product_offer_quantity',
-                'product_offer_quantity.offer = product_offer.id'
+                'product_offer_quantity.offer = product_offer.id',
             );
 
 
@@ -521,7 +516,7 @@ final class MegamarketAllProductRepository implements MegamarketAllProductInterf
                 'product_modification',
                 ProductModificationQuantity::class,
                 'product_modification_quantity',
-                'product_modification_quantity.modification = product_modification.id'
+                'product_modification_quantity.modification = product_modification.id',
             );
 
 
@@ -549,7 +544,7 @@ final class MegamarketAllProductRepository implements MegamarketAllProductInterf
 			   
 			END AS product_quantity
             
-		'
+		',
         );
 
 
@@ -593,7 +588,7 @@ final class MegamarketAllProductRepository implements MegamarketAllProductInterf
                         (product_modification.const IS NOT NULL AND product_package.modification = product_modification.const) OR 
                         (product_modification.const IS NULL AND product_package.modification IS NULL)
                    )
-        '
+        ',
             );
 
 

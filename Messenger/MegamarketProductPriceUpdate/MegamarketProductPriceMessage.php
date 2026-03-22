@@ -63,7 +63,8 @@ final class MegamarketProductPriceMessage
         string $article,
         Money|int|float|string|null $price,
         Currency|string $currency
-    ) {
+    )
+    {
 
         if(!$profile instanceof UserProfileUid)
         {

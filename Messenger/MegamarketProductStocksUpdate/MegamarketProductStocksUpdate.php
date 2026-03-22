@@ -56,7 +56,7 @@ final readonly class MegamarketProductStocksUpdate
         {
             $this->logger->info(
                 sprintf('megamarket-products: Невозможно определить товар c артикулом %s для обновления остатка', $message->getArticle()),
-                [self::class.':'.__LINE__]
+                [self::class.':'.__LINE__],
             );
         }
 
@@ -72,12 +72,12 @@ final readonly class MegamarketProductStocksUpdate
             $this->messageDispatch->dispatch(
                 message: $message,
                 stamps: [new MessageDelay('5 seconds')],
-                transport: (string) $message->getProfile()
+                transport: (string) $message->getProfile(),
             );
 
             $this->logger->critical(
                 message: sprintf('megamarket-products: Пробуем обновить остатки %s через 5 секунд', $message->getArticle()),
-                context: [self::class.':'.__LINE__]
+                context: [self::class.':'.__LINE__],
             );
 
             return;
@@ -87,12 +87,12 @@ final readonly class MegamarketProductStocksUpdate
             sprintf(
                 'Обновили остатки товара с артикулом %s => %s',
                 $message->getArticle(),
-                $Quantity
+                $Quantity,
             ),
             [
                 self::class.':'.__LINE__,
-                'profile' => (string) $message->getProfile()
-            ]
+                'profile' => (string) $message->getProfile(),
+            ],
         );
     }
 }

@@ -82,11 +82,11 @@ final class UpdateMegamarketProductStocksRequest extends Megamarket
                         'stocks' => [
                             [
                                 "offerId" => $this->article,
-                                "quantity" => self::STOP_SALES === true ? 0 : max($this->total, 0)
-                            ]
-                        ]
-                    ]
-                ]]
+                                "quantity" => self::STOP_SALES === true ? 0 : max($this->total, 0),
+                            ],
+                        ],
+                    ],
+                ]],
             );
 
             $content = $response->toArray(false);

@@ -38,6 +38,7 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 /**
  * Обновляем стоимость Megamarket при изменении системной карточки
+ *
  * @note Карточка обновляется посредством вызова feed.xml
  */
 #[AsMessageHandler(priority: 10)]
@@ -82,7 +83,7 @@ final readonly class UpdatePriceMegamarketByChangeProduct
                 )
                 {
                     $this->logger->critical(
-                        sprintf('megamarket-products: Не указаны параметры упаковки артикула %s', $product['product_article'])
+                        sprintf('megamarket-products: Не указаны параметры упаковки артикула %s', $product['product_article']),
                     );
 
                     continue;
@@ -99,18 +100,18 @@ final readonly class UpdatePriceMegamarketByChangeProduct
                     $profile,
                     $product['product_article'],
                     $price,
-                    $currency
+                    $currency,
                 );
 
                 $MegamarketProductPriceMessage->setParameter(
                     $product['product_parameter_width'],
                     $product['product_parameter_height'],
-                    $product['product_parameter_length']
+                    $product['product_parameter_length'],
                 );
 
                 $this->messageDispatch->dispatch(
                     $MegamarketProductPriceMessage,
-                    transport: 'megamarket-products'
+                    transport: 'megamarket-products',
                 );
             }
         }

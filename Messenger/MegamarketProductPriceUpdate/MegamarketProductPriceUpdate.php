@@ -69,12 +69,12 @@ final readonly class MegamarketProductPriceUpdate
             $this->messageDispatch->dispatch(
                 message: $message,
                 stamps: [new MessageDelay('5 seconds')],
-                transport: (string) $message->getProfile()
+                transport: (string) $message->getProfile(),
             );
 
             $this->logger->critical(
                 message: sprintf('megamarket-products: Пробуем обновить стоимость %s через 5 секунд', $message->getArticle()),
-                context: [self::class.':'.__LINE__]
+                context: [self::class.':'.__LINE__],
             );
 
             return;
@@ -84,9 +84,9 @@ final readonly class MegamarketProductPriceUpdate
             sprintf(
                 'Обновили стоимость товара с артикулом %s => %s',
                 $message->getArticle(),
-                $message->getPrice()
+                $message->getPrice(),
             ),
-            [self::class.':'.__LINE__, 'profile' => (string) $message->getProfile()]
+            [self::class.':'.__LINE__, 'profile' => (string) $message->getProfile()],
         );
     }
 }

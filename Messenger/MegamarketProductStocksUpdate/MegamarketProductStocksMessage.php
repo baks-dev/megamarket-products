@@ -43,7 +43,8 @@ final class MegamarketProductStocksMessage
     public function __construct(
         UserProfileUid|string $profile,
         string $article
-    ) {
+    )
+    {
 
         if(!$profile instanceof UserProfileUid)
         {

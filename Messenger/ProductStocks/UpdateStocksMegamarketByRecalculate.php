@@ -76,7 +76,7 @@ final readonly class UpdateStocksMegamarketByRecalculate
                 if(empty($itemProduct['product_price']))
                 {
                     $this->logger->critical(
-                        sprintf('Не указана стоимость продукции артикула %s', $itemProduct['product_article'])
+                        sprintf('Не указана стоимость продукции артикула %s', $itemProduct['product_article']),
                     );
 
                     continue;
@@ -95,7 +95,7 @@ final readonly class UpdateStocksMegamarketByRecalculate
                 )
                 {
                     $this->logger->critical(
-                        sprintf('Не указаны параметры упаковки артикула %s', $itemProduct['product_article'])
+                        sprintf('Не указаны параметры упаковки артикула %s', $itemProduct['product_article']),
                     );
 
                     continue;
@@ -103,14 +103,14 @@ final readonly class UpdateStocksMegamarketByRecalculate
 
                 $MegamarketProductStocksMessage = new MegamarketProductStocksMessage(
                     $profile,
-                    $itemProduct['product_article']
+                    $itemProduct['product_article'],
                 );
 
                 /** Добавляем в очередь на обновление */
                 $this->messageDispatch->dispatch(
                     $MegamarketProductStocksMessage,
                     stamps: [new MessageDelay('5 seconds')], // задержка 3 сек для обновления карточки
-                    transport: (string) $profile
+                    transport: (string) $profile,
                 );
             }
         }

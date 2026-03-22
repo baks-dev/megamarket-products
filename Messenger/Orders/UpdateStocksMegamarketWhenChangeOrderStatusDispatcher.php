@@ -93,7 +93,7 @@ final readonly class UpdateStocksMegamarketWhenChangeOrderStatusDispatcher
                 if(empty($itemProduct['product_price']))
                 {
                     $this->logger->critical(
-                        sprintf('Не указана стоимость продукции артикула %s', $itemProduct['product_article'])
+                        sprintf('Не указана стоимость продукции артикула %s', $itemProduct['product_article']),
                     );
 
                     continue;
@@ -112,7 +112,7 @@ final readonly class UpdateStocksMegamarketWhenChangeOrderStatusDispatcher
                 )
                 {
                     $this->logger->critical(
-                        sprintf('Не указаны параметры упаковки артикула %s', $itemProduct['product_article'])
+                        sprintf('Не указаны параметры упаковки артикула %s', $itemProduct['product_article']),
                     );
 
                     continue;
@@ -131,7 +131,7 @@ final readonly class UpdateStocksMegamarketWhenChangeOrderStatusDispatcher
 
                     $MegamarketProductStocksMessage = new MegamarketProductStocksMessage(
                         profile: $UserProfileUid,
-                        article: $itemProduct['product_article']
+                        article: $itemProduct['product_article'],
                     );
 
                     $this->messageDispatch->dispatch(
