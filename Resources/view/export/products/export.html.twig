@@ -54,7 +54,7 @@
                             offer: card.offerValue,
                             variation: card.variationValue,
                             modification: card.modificationValue,
-                            postfix:  (card.modificationPostfix ?: card.variationPostfix ?: card.offerPostfix ?: null )|replace({ '/': '-' })
+                            postfix:  (card.modificationPostfix ?: card.variationPostfix ?: card.offerPostfix ?: null )|replace({ '/': '-', ' ': '~' })
                         } )) }}</url>
 
                     <name>{{ card.productName }}
